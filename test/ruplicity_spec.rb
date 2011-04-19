@@ -7,27 +7,39 @@ describe Ruplicity do
 		@rup = Ruplicity.new({},{})
 	end
 
-	describe "#remove_empty_keys" do
-		it "leaves populated keys unchanged" do
-			full = {"one" => "one", "two" => 2, "three" => {}}
-			@rup.remove_empty_keys(full).should == full
+	describe "#clean_hash" do
+		before(:each) do
+			@gdhash = {"source" => "this", "dest" => "that",
+				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
+				"env" => {"PASS" => "blaa"}}
+		end
+		it "leaves correct keys unchanged" do
+			@rup.clean_hash(@gdhash).should == @gdhash
 		end
 
 		it "removes keys that have nil values" do
-			partial = {"one" => "one", "two" => nil, "three" => 2, "four" => nil, "five" => {}}
-			answer = {"one" => "one", "three" => 2, "five" => {}}
-			@rup.remove_empty_keys(partial).should == answer
+			@gdhash["source"] = nil
+			@rup.clean_hash(@gdhash).should ==
+				{"dest" => "that",
+				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
+				"env" => {"PASS" => "blaa"}}
 		end
 
 		it "removes keys that have empty strings" do
-			partial = {"one" => [], "two" => "", "three" => "this", "four" => nil, "five" => {}}
-			answer = {"one" => [], "three" => "this", "five" => {}}
-			@rup.remove_empty_keys(partial).should == answer
+			@gdhash["dest"] = ""
+			@rup.clean_hash(@gdhash).should ==
+				{"source" => "this",
+				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
+				"env" => {"PASS" => "blaa"}}
 		end
 
-		it "should remove all keys if they are empty" do
-			empty = {"one" => nil, "two" => nil, "three" => nil}
-			@rup.remove_empty_keys(empty).should == {}
+		it "should remove non valid keys" do
+			@gdhash["new"] = "hello"
+			@gdhash["newhash"] = {"this" => "that"}
+			@rup.clean_hash(@gdhash).should ==
+				{"source" => "this", "dest" => "that",
+				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
+				"env" => {"PASS" => "blaa"}}
 		end
 	end
 
@@ -88,18 +100,6 @@ describe Ruplicity do
 				"one" => 1}
 		end
 
-		it "removes empty keys from config" do
-			conf = {"this" => nil, "that" => {"encrypt" => "yes"}}
-			@rup.merge_backup(conf, {} ).should ==
-				{"that" => {"encrypt" => "yes"}}
-		end
-
-		it "removes empty keys from backup" do
-			back = {"this" => nil, "that" => {"encrypt" => "yes"}}
-			@rup.merge_backup({}, back ).should ==
-				{"that" => {"encrypt" => "yes"}}
-		end
-
 		it "adds items from config keys to ones in backup" do
 			back = {"one" => 1, "options" => {"this" => "that"},
 				"env" => {"NAME" => "bob"}}
@@ -116,6 +116,47 @@ describe Ruplicity do
 				{"options" => {"encrypt" => "no", "this" => "that"},
 				"env" => {"PASS" => "bye", "SIGN" => "this", "NAME" => "bob"},
 				"one" => 1}
+		end
+	end
+
+	describe "#initialize" do
+		before(:each) do
+			conf = {"options" => {"encrypt" => "ABC"}}
+			one = {"source" => "home", "dest" => "away",
+				"options" => {"dry-run" => nil}}
+			two = {"source" => "home", "dest" => "away", "bad" => "no",
+				"env" => {"PASS" => "ABC", "sign" => "DEF"}}
+			back = {"one" => one, "two" => two}
+			@pop = Ruplicity.new(conf, back)
+		end
+
+		it "should have converted options to an array" do
+			@pop.backup("one")["options"].should be_a Array
+		end
+
+		it "should have processed nil options" do
+			@pop.backup("one")["options"].should include " --dry-run"
+		end
+
+		it "should have merged the config array" do
+			@pop.backup("one")["options"].should include " --encrypt ABC"
+			@pop.backup("two")["options"].should include " --encrypt ABC"
+		end
+
+		it "should have converted env to an array" do
+			@pop.backup("two")["env"].should be_a Array
+		end
+
+		it "should have created and empty env when missing" do
+			@pop.backup("one")["env"].should be_a Array
+		end
+
+		it "should have uppercased env keys" do
+			@pop.backup("two")["env"].should include "SIGN=DEF"
+		end
+
+		it "should have removed bad keys" do
+			@pop.backup("two").keys.should_not include "bad"
 		end
 	end
 

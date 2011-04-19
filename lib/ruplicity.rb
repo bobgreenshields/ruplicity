@@ -1,9 +1,30 @@
 class Ruplicity
-	def initialize(config, backups, logger = nil)
+	def initialize(config, backups)
+		@config = clean_hash(config)
+		@backups = {}
+		backups.each { |k,v| @backups[k] = clean_hash v }
+		@backups.each do |k,v|
+			temp = merge_backup(@config, v)
+			temp["env"] = convert_env temp
+			temp["options"] = convert_options(k, temp)
+			@backups[k] = temp
+		end
 	end
 
-	def remove_empty_keys(backup)
-		backup.delete_if { |k,v| v.nil? or (v.is_a? String and v.length == 0) }
+	def backup(name)
+		@backups[name]
+	end
+
+	def clean_hash(backup)
+		goodkeys = ["source", "dest", "options", "env"]
+		backup.delete_if do |k,v|
+			case
+			when v.nil? : true
+			when (v.is_a? String and v.length == 0) : true
+			when (not goodkeys.include? k ) : true
+			else false
+			end
+		end
 	end
 
 	def convert_env(backup)
@@ -24,9 +45,7 @@ class Ruplicity
 		res
 	end
 
-	def merge_backup(dirtyconfig, dirtybackup)
-		config = remove_empty_keys dirtyconfig
-		backup = remove_empty_keys dirtybackup
+	def merge_backup(config, backup)
 		config.each do |k,v|
 			if backup.has_key? k
 				backup[k] = config[k].merge(backup[k])
