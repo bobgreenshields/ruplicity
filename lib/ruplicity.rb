@@ -1,5 +1,5 @@
 class Ruplicity
-	def initialize(config, backups)
+	def initialize(config, backups, log = nil)
 		@config = clean_hash(config)
 		@backups = {}
 		backups.each { |k,v| @backups[k] = clean_hash v }
@@ -57,6 +57,11 @@ class Ruplicity
 	end
 
 	def cmd(backup)
+		cmdarr = ["duplicity"]
+		cmdarr = cmdarr + backup["options"]
+		cmdarr << backup["source"]
+		cmdarr << backup["dest"]
+		cmdarr.join(" ")
 	end
 
 end

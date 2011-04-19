@@ -125,14 +125,39 @@ describe Ruplicity do
 
   	describe "#cmd" do
   		before(:each) do
+  			@opts = [" --name one", " --encrypt-key ABC", "--dry-run"]
   			@back = {"source" => "here", "dest" => "there",
-  				"options" => [" --name one", " --encrypt-key ABC", "--dry-run"],
+  				"options" => @opts,
   				"env" => {"PASS" => "hello"} }
   		end
 
   		subject { @rup.cmd(@back) }
 
   		it { should be_a String }
+
+  		context "with its result split into words" do
+  			before(:each) do
+  				@cmdwords = @rup.cmd(@back).split
+  			end
+
+				it "should have duplicity as its first word" do
+					@cmdwords[0].should == "duplicity"
+				end
+
+				it "should have the options after its first word" do
+					@cmdwords[1..5].should == ["--name", "one", "--encrypt-key",
+						"ABC", "--dry-run"]
+				end
+
+				it "should have the source as its next to last word" do
+					@cmdwords[-2].should == "here"
+				end
+
+				it "should have the dest as its last word" do
+					@cmdwords[-1].should == "there"
+				end
+
+			end
   	end
 	end
 
