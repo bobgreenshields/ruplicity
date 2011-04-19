@@ -28,9 +28,9 @@ class Ruplicity
 	end
 
 	def convert_env(backup)
-		res = []
+		res = {}
 		backup.fetch("env", {}).each do |k,v|
-			res << "#{k.upcase}=#{v}"
+			res[k.upcase] = v
 		end
 		res
 	end
@@ -54,6 +54,9 @@ class Ruplicity
 			end
 		end
 		backup
+	end
+
+	def cmd(backup)
 	end
 
 end

@@ -46,22 +46,24 @@ describe Ruplicity do
   	end
   
   	describe "#convert_env" do
-  		it "returns an empty array if no env key" do
-  			@rup.convert_env({"one" => 1}).should == []
+  		it "returns an empty hash if no env key" do
+  			@rup.convert_env({"one" => 1}).should be_a Hash
+  			@rup.convert_env({"one" => 1}).keys.length.should == 0
   		end
   
-  		it "returns key=value" do
+  		it "returns key value hash" do
   			backup = {"one" => 1, "env" => {"PASS" => "hello", "PATH" => "here"}}
-  			@rup.convert_env(backup).length.should == 2
-  			@rup.convert_env(backup).should include "PASS=hello"
-  			@rup.convert_env(backup).should include "PATH=here"
+  			@rup.convert_env(backup).should be_a Hash
+  			@rup.convert_env(backup).keys.length.should == 2
+  			@rup.convert_env(backup)["PASS"].should == "hello"
+  			@rup.convert_env(backup)["PATH"].should == "here"
   		end
   
   		it "uppercases keys" do
   			backup = {"one" => 1, "env" => {"pass" => "hello", "PATH" => "here"}}
-  			@rup.convert_env(backup).length.should == 2
-  			@rup.convert_env(backup).should include "PASS=hello"
-  			@rup.convert_env(backup).should include "PATH=here"
+  			@rup.convert_env(backup).keys.length.should == 2
+  			@rup.convert_env(backup).keys.should include "PASS"
+  			@rup.convert_env(backup).keys.should_not include "pass"
   		end
   	end
   
@@ -120,6 +122,18 @@ describe Ruplicity do
   				"one" => 1}
   		end
   	end
+
+  	describe "#cmd" do
+  		before(:each) do
+  			@back = {"source" => "here", "dest" => "there",
+  				"options" => [" --name one", " --encrypt-key ABC", "--dry-run"],
+  				"env" => {"PASS" => "hello"} }
+  		end
+
+  		subject { @rup.cmd(@back) }
+
+  		it { should be_a String }
+  	end
 	end
 
 	context "when created with populated hashes" do
@@ -147,22 +161,22 @@ describe Ruplicity do
   			@pop.backup("two")["options"].should include " --encrypt ABC"
   		end
   
-  		it "should have converted env to an array" do
-  			@pop.backup("two")["env"].should be_a Array
-  		end
-  
-  		it "should have created and empty env when missing" do
-  			@pop.backup("one")["env"].should be_a Array
+  		it "should have created an empty env when missing" do
+  			@pop.backup("one").keys.should include "env"
+  			@pop.backup("one")["env"].should be_a Hash
+  			@pop.backup("one")["env"].keys.length.should == 0
   		end
   
   		it "should have uppercased env keys" do
-  			@pop.backup("two")["env"].should include "SIGN=DEF"
+  			@pop.backup("two")["env"].keys.should include "SIGN"
+  			@pop.backup("two")["env"].keys.should_not include "sign"
   		end
   
   		it "should have removed bad keys" do
   			@pop.backup("two").keys.should_not include "bad"
   		end
   	end
+
 	end
 
 end
