@@ -1,6 +1,4 @@
-$:.unshift File.join(File.dirname(__FILE__), "..", "lib")
-
-require 'ruplicity'
+require 'spec_helper'
 
 describe Ruplicity do
 

@@ -1,5 +1,5 @@
 class Ruplicity
-	def initialize(config, backups, log = nil)
+	def initialize(config, backups, logger = nil)
 		@config = clean_hash(config)
 		@backups = {}
 		backups.each { |k,v| @backups[k] = clean_hash v }
