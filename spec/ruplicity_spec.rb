@@ -1,10 +1,12 @@
 require 'spec_helper'
+require 'stringio'
 
 describe Ruplicity do
 
 	context "with empty hashes" do
   	before(:each) do
-  		@rup = Ruplicity.new({},{})
+  		@log = Testlogger.new
+  		@rup = Ruplicity.new({},{}, @log)
   	end
   
   	describe "#clean_hash" do
@@ -226,9 +228,54 @@ describe Ruplicity do
 						@cmdwords[-1].should == "there"
 					end
 				end
-
-
 			end
+  	end
+
+  	describe "#log_execution" do
+  		before(:each) do
+				@back = {"name" => "test", "source" => "this", "dest" => "that"}
+				@res = {:exitcode => 0,
+					:stdout => StringIO.new("out\nsecond\nthird"),
+					:stderr => StringIO.new("err\nsecond\nthird")
+				}
+			end
+
+			context "with a zero exitcode" do
+				it "should call execute_cmd" do
+					@rup.stub(:execute_cmd).and_return(@res)
+					@rup.should_receive(:execute_cmd)
+					@rup.log_execution(@back)
+				end
+
+				it "should have logged a summary to info" do
+					@rup.stub(:execute_cmd).and_return(@res)
+					@rup.log_execution(@back)
+					@log.infolog.length.should == 4
+					@log.infolog[0].should match /SUMMARY: test:/
+					@log.infolog[1].should match /^test: out/
+				end
+			end
+
+			context "with a non-zero exitcode" do
+				before(:each) do
+					@res[:exitcode] = 1
+				end
+
+				it "should call execute_cmd" do
+					@rup.stub(:execute_cmd).and_return(@res)
+					@rup.should_receive(:execute_cmd)
+					@rup.log_execution(@back)
+				end
+
+				it "should have logged a summary to error" do
+					@rup.stub(:execute_cmd).and_return(@res)
+					@rup.log_execution(@back)
+					@log.errorlog[0].should match /SUMMARY: test:.*error code 1$/
+					@log.errorlog[1].should match /^test: err/
+					@log.errorlog.length.should == 4
+				end
+			end
+
   	end
 	end
 
@@ -264,10 +311,6 @@ describe Ruplicity do
 			end
 
 			describe "#initialize" do
-#				it "should not allow config to overwrite the name" do
-#					conf["options"]["name"] = "config"
-#				end
-
 				it "should have converted options to an array" do
 					@pop.backup("one")["options"].should be_a Array
 				end

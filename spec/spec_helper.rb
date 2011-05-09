@@ -1,1 +1,2 @@
 require 'ruplicity'
+require 'testlogger'

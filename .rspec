@@ -1,0 +1,2 @@
+-r ~/.vim/bundle/Specky/ruby/specky_formatter
+-f SpeckyFormatter

@@ -15,6 +15,7 @@ end
 class Ruplicity
 	def initialize(config, backups, logger = nil)
 		@logger = logger || NullLogger.new
+		@envs_set = []
 		@config = clean_hash("config", config)
 		if @config.has_key?("options") and @config["options"].has_key?("name")
 			@config["options"].delete("name")
@@ -112,5 +113,22 @@ class Ruplicity
 		res[:stdout].each_line { |line| @logger.info("#{name}: #{line}") }
 		res[:stderr].each_line { |line| @logger.error("#{name}: #{line}") }
 	end
+
+	def set_env_value(name, value)
+		ENV[name.capitalize] = value
+	end
+
+	def set_env(env_hash)
+		@envs_set = []
+		env_hash.each do |k, v|
+			@envs_set << k
+			set_env_value(k, v)
+		end
+	end
+
+	def reset_env
+		@envs_set.each { |name| set_env_value(name, "") }
+	end
+		
 
 end
