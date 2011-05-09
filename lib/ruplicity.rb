@@ -115,7 +115,7 @@ class Ruplicity
 	end
 
 	def set_env_value(name, value)
-		ENV[name.capitalize] = value
+		ENV[name.upcase] = value
 	end
 
 	def set_env(env_hash)
