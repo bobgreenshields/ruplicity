@@ -112,6 +112,7 @@ class Ruplicity
 		end
 		res[:stdout].each_line { |line| @logger.info("#{name}: #{line}") }
 		res[:stderr].each_line { |line| @logger.error("#{name}: #{line}") }
+		res
 	end
 
 	def set_env_value(name, value)
