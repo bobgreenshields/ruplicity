@@ -16,45 +16,60 @@ describe Ruplicity do
   		end
 
   		it "leaves correct keys unchanged" do
-  			@rup.clean_hash(@gdhash).should == @gdhash
+  			@rup.clean_hash("test", @gdhash).should == @gdhash
   		end
   
   		it "removes keys that have nil values" do
   			@gdhash["source"] = nil
   			@targethash.delete "source"
-  			@rup.clean_hash(@gdhash).should ==
-  				@targethash
-#  				{"dest" => "that", "action" => "full",
-#  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
-#  				"env" => {"PASS" => "blaa"}}
+  			@rup.clean_hash("test", @gdhash).should == @targethash
   		end
   
   		it "removes keys that have empty strings" do
   			@gdhash["dest"] = ""
   			@targethash.delete "dest"
-  			@rup.clean_hash(@gdhash).should ==
-  				@targethash
-#  				{"source" => "this", "action" => "full",
-#  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
-#  				"env" => {"PASS" => "blaa"}}
+  			@rup.clean_hash("test", @gdhash).should == @targethash
   		end
   
   		it "should remove non valid keys" do
   			@gdhash["new"] = "hello"
   			@gdhash["newhash"] = {"this" => "that"}
-  			@rup.clean_hash(@gdhash).should ==
-  				@targethash
-#  				{"source" => "this", "dest" => "that", "action" => "full",
-#  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
-#  				"env" => {"PASS" => "blaa"}}
+  			@rup.clean_hash("test", @gdhash).should == @targethash
   		end
-  	end
-  
-  	describe "#convert_action" do
-  		it "returns an empty string if no action key" do
-  			@rup.convert_action({"one" => 1}).should be_a String
-  			@rup.convert_action({"one" => 1}).length.should == 0
+
+  		it "should be happy with a missing action key/value" do
+  			@gdhash.delete "action"
+  			@rup.clean_hash("test", @gdhash).should == @gdhash
   		end
+
+			it "should remove the action key when value is nil" do
+				@gdhash["action"] = nil
+				@targethash.delete "action"
+  			@rup.clean_hash("test", @gdhash).should == @targethash
+  		end
+
+			it "should remove the action key when value is empty string" do
+				@gdhash["action"] = ""
+				@targethash.delete "action"
+  			@rup.clean_hash("test", @gdhash).should == @targethash
+  		end
+
+			it "should raise an error when it has an invalid action" do
+				@gdhash["action"] = "invalid"
+  			lambda { @rup.clean_hash("test", @gdhash) }.should raise_error(
+  				ArgumentError,
+					"Backup-test has an invalid action of-invalid")
+  		end
+
+			it "should not raise an error when it has a valid action" do
+				gdactions = %w(cleanup collection-status incr list-current-files)
+				gdactions.each do |a|
+					@gdhash["action"] = a
+					lambda { @rup.clean_hash("test", @gdhash) }.should_not raise_error
+				end
+  		end
+
+
   	end
   
   	describe "#convert_env" do
@@ -74,32 +89,41 @@ describe Ruplicity do
   		it "uppercases keys" do
   			backup = {"one" => 1, "env" => {"pass" => "hello", "PATH" => "here"}}
   			@rup.convert_env(backup).keys.length.should == 2
+  			@rup.convert_env(backup).keys.should include "PATH"
   			@rup.convert_env(backup).keys.should include "PASS"
   			@rup.convert_env(backup).keys.should_not include "pass"
   		end
   	end
   
   	describe "#convert_options" do
+  		it "should raise ArgumentError if no name key" do
+  			lambda { @rup.convert_options(
+  				{"one" => 1}) }.should raise_error ArgumentError
+  		end
+
   		it "returns name option if no options key" do
-  			@rup.convert_options("test", {"one" => 1}).should == [" --name test"]
+  			@rup.convert_options(
+  				{"one" => 1, "name" => "test"}).should == [" --name test"]
   		end
   
   		it "adds other options ignoring nils and empty strings" do
-  			backup = {"one" =>1, "options" => {"silent" => nil, "encrypt" => ""}}
+  			backup = {"one" =>1, "options" => {"silent" => nil, "encrypt" => ""},
+					"name" => "test"}
   			expected = [" --name test --silent --encrypt"]
-  			@rup.convert_options("test", backup).length.should == 3
-  			@rup.convert_options("test", backup).should include " --name test"
-  			@rup.convert_options("test", backup).should include " --silent"
-  			@rup.convert_options("test", backup).should include " --encrypt"
+  			@rup.convert_options(backup).length.should == 3
+  			@rup.convert_options(backup).should include " --name test"
+  			@rup.convert_options(backup).should include " --silent"
+  			@rup.convert_options(backup).should include " --encrypt"
   		end
   
   		it "adds keys to options" do
-  			backup = {"one" =>1, "options" => {"silent" => nil, "encrypt" => "yes"}}
+  			backup = {"one" =>1, "options" => {"silent" => nil, "encrypt" => "yes"},
+					"name" => "test"}
   			expected = [" --name test --silent --encrypt"]
-  			@rup.convert_options("test", backup).length.should == 3
-  			@rup.convert_options("test", backup).should include " --name test"
-  			@rup.convert_options("test", backup).should include " --silent"
-  			@rup.convert_options("test", backup).should include " --encrypt yes"
+  			@rup.convert_options(backup).length.should == 3
+  			@rup.convert_options(backup).should include " --name test"
+  			@rup.convert_options(backup).should include " --silent"
+  			@rup.convert_options(backup).should include " --encrypt yes"
   		end
   	end
   
@@ -107,6 +131,10 @@ describe Ruplicity do
   		before(:each) do
   			@config = {"options" => {"encrypt" => "yes"},
   				"env" => {"PASS" => "hello", "SIGN" => "this"}}
+  		end
+
+  		it "should be a string" do
+  			@rup.merge_backup(@config, {"one" => 1} ).should be_a Hash
   		end
   
   		it "adds keys from config when they don't exist in backup" do
@@ -138,7 +166,7 @@ describe Ruplicity do
   	describe "#cmd" do
   		before(:each) do
   			@opts = [" --name one", " --encrypt-key ABC", "--dry-run"]
-  			@back = {"source" => "here", "dest" => "there",
+  			@back = {"source" => "here", "dest" => "there", "action" => "incr",
   				"options" => @opts,
   				"env" => {"PASS" => "hello"} }
   		end
@@ -148,70 +176,126 @@ describe Ruplicity do
   		it { should be_a String }
 
   		context "with its result split into words" do
-  			before(:each) do
-  				@cmdwords = @rup.cmd(@back).split
-  			end
+				context "with an action specified" do
+					before(:each) do
+						@cmdwords = @rup.cmd(@back).split
+					end
 
-				it "should have duplicity as its first word" do
-					@cmdwords[0].should == "duplicity"
+					it "should have duplicity as its first word" do
+						@cmdwords[0].should == "duplicity"
+					end
+
+					it "should have the action as its second word" do
+						@cmdwords[1].should == "incr"
+					end
+
+					it "should have the options after its second word" do
+						@cmdwords[2..6].should == ["--name", "one", "--encrypt-key",
+							"ABC", "--dry-run"]
+					end
+
+					it "should have the source as its next to last word" do
+						@cmdwords[-2].should == "here"
+					end
+
+					it "should have the dest as its last word" do
+						@cmdwords[-1].should == "there"
+					end
 				end
 
-				it "should have the options after its first word" do
-					@cmdwords[1..5].should == ["--name", "one", "--encrypt-key",
-						"ABC", "--dry-run"]
+				context "with no action specified" do
+					before(:each) do
+						@back.delete "action"
+						@cmdwords = @rup.cmd(@back).split
+					end
+
+					it "should have duplicity as its first word" do
+						@cmdwords[0].should == "duplicity"
+					end
+
+					it "should have the options after its first word" do
+						@cmdwords[1..5].should == ["--name", "one", "--encrypt-key",
+							"ABC", "--dry-run"]
+					end
+
+					it "should have the source as its next to last word" do
+						@cmdwords[-2].should == "here"
+					end
+
+					it "should have the dest as its last word" do
+						@cmdwords[-1].should == "there"
+					end
 				end
 
-				it "should have the source as its next to last word" do
-					@cmdwords[-2].should == "here"
-				end
-
-				it "should have the dest as its last word" do
-					@cmdwords[-1].should == "there"
-				end
 
 			end
   	end
 	end
 
+
 	context "when created with populated hashes" do
 		before(:each) do
-			conf = {"options" => {"encrypt" => "ABC"}}
+			@conf = {"options" => {"encrypt" => "ABC"}}
 			one = {"source" => "home", "dest" => "away",
 				"options" => {"dry-run" => nil}}
 			two = {"source" => "home", "dest" => "away", "bad" => "no",
 				"env" => {"PASS" => "ABC", "sign" => "DEF"}}
-			back = {"one" => one, "two" => two}
-			@pop = Ruplicity.new(conf, back)
+			@back = {"one" => one, "two" => two}
 		end
 
-  	describe "#initialize" do
-  		it "should have converted options to an array" do
-  			@pop.backup("one")["options"].should be_a Array
-  		end
-  
-  		it "should have processed nil options" do
-  			@pop.backup("one")["options"].should include " --dry-run"
-  		end
-  
-  		it "should have merged the config array" do
-  			@pop.backup("one")["options"].should include " --encrypt ABC"
-  			@pop.backup("two")["options"].should include " --encrypt ABC"
-  		end
-  
-  		it "should have created an empty env when missing" do
-  			@pop.backup("one").keys.should include "env"
-  			@pop.backup("one")["env"].should be_a Hash
-  			@pop.backup("one")["env"].keys.length.should == 0
-  		end
-  
-  		it "should have uppercased env keys" do
-  			@pop.backup("two")["env"].keys.should include "SIGN"
-  			@pop.backup("two")["env"].keys.should_not include "sign"
-  		end
-  
-  		it "should have removed bad keys" do
-  			@pop.backup("two").keys.should_not include "bad"
-  		end
+		context "with invalid config hash" do
+			before(:each) do
+				@conf["options"]["name"] = "badname"
+				@pop = Ruplicity.new(@conf, @back)
+			end
+
+			describe "#initialize" do
+				it "should not allow config to overwrite the name" do
+					@conf["options"]["name"] = "config"
+					@pop.backup_names.should include "one"
+					@pop.backup_names.should include "two"
+				end
+			end
+		end
+
+		context "with valid hashes" do
+			before(:each) do
+				@pop = Ruplicity.new(@conf, @back)
+			end
+
+			describe "#initialize" do
+#				it "should not allow config to overwrite the name" do
+#					conf["options"]["name"] = "config"
+#				end
+
+				it "should have converted options to an array" do
+					@pop.backup("one")["options"].should be_a Array
+				end
+		
+				it "should have processed nil options" do
+					@pop.backup("one")["options"].should include " --dry-run"
+				end
+		
+				it "should have merged the config array" do
+					@pop.backup("one")["options"].should include " --encrypt ABC"
+					@pop.backup("two")["options"].should include " --encrypt ABC"
+				end
+		
+				it "should have created an empty env when missing" do
+					@pop.backup("one").keys.should include "env"
+					@pop.backup("one")["env"].should be_a Hash
+					@pop.backup("one")["env"].keys.length.should == 0
+				end
+		
+				it "should have uppercased env keys" do
+					@pop.backup("two")["env"].keys.should include "SIGN"
+					@pop.backup("two")["env"].keys.should_not include "sign"
+				end
+		
+				it "should have removed bad keys" do
+					@pop.backup("two").keys.should_not include "bad"
+				end
+			end
   	end
 
 	end
