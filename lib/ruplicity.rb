@@ -1,5 +1,20 @@
+class NullLogger
+	def initialize
+		@absorb = [:info, :debug, :warn, :fatal]
+	end
+
+	def method_missing(meth, *args, &blk)
+		if @absorb.include? meth
+			return nil
+		else
+			super
+		end
+	end
+end
+
 class Ruplicity
 	def initialize(config, backups, logger = nil)
+		@logger = logger || NullLogger.new
 		@config = clean_hash("config", config)
 		if @config.has_key?("options") and @config["options"].has_key?("name")
 			@config["options"].delete("name")
@@ -83,6 +98,19 @@ class Ruplicity
 		cmdarr << backup["source"]
 		cmdarr << backup["dest"]
 		cmdarr.join(" ")
+	end
+
+	def log_execution(backup)
+		res = execute_cmd backup
+		name = backup["name"]
+		exitcode = res[:exitcode]
+		if exitcode == 0
+			@logger.info("SUMMARY: #{name}: ran successfully")
+		else
+			@logger.error("SUMMARY: #{name}: exited with error code #{exitcode}")
+		end
+		res[:stdout].each_line { |line| @logger.info("#{name}: #{line}") }
+		res[:stderr].each_line { |line| @logger.error("#{name}: #{line}") }
 	end
 
 end
