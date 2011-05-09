@@ -16,7 +16,10 @@ class Ruplicity
 	end
 
 	def clean_hash(backup)
-		goodkeys = ["source", "dest", "options", "env"]
+		goodkeys = ["source", "dest", "action", "options", "env"]
+		goodactions = %w(cleanup collection-status full incr list-current-files
+			remove-older-than remove-all-but-n-full remove-all-inc-of-but-n-full 
+			verify)
 		backup.delete_if do |k,v|
 			case
 			when v.nil? : true
@@ -25,6 +28,10 @@ class Ruplicity
 			else false
 			end
 		end
+	end
+
+	def convert_action(backup)
+		res = ""
 	end
 
 	def convert_env(backup)

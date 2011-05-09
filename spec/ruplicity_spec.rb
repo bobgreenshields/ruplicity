@@ -9,37 +9,51 @@ describe Ruplicity do
   
   	describe "#clean_hash" do
   		before(:each) do
-  			@gdhash = {"source" => "this", "dest" => "that",
+  			@gdhash = {"source" => "this", "dest" => "that", "action" => "full",
   				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
   				"env" => {"PASS" => "blaa"}}
+  			@targethash = @gdhash
   		end
+
   		it "leaves correct keys unchanged" do
   			@rup.clean_hash(@gdhash).should == @gdhash
   		end
   
   		it "removes keys that have nil values" do
   			@gdhash["source"] = nil
+  			@targethash.delete "source"
   			@rup.clean_hash(@gdhash).should ==
-  				{"dest" => "that",
-  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
-  				"env" => {"PASS" => "blaa"}}
+  				@targethash
+#  				{"dest" => "that", "action" => "full",
+#  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
+#  				"env" => {"PASS" => "blaa"}}
   		end
   
   		it "removes keys that have empty strings" do
   			@gdhash["dest"] = ""
+  			@targethash.delete "dest"
   			@rup.clean_hash(@gdhash).should ==
-  				{"source" => "this",
-  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
-  				"env" => {"PASS" => "blaa"}}
+  				@targethash
+#  				{"source" => "this", "action" => "full",
+#  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
+#  				"env" => {"PASS" => "blaa"}}
   		end
   
   		it "should remove non valid keys" do
   			@gdhash["new"] = "hello"
   			@gdhash["newhash"] = {"this" => "that"}
   			@rup.clean_hash(@gdhash).should ==
-  				{"source" => "this", "dest" => "that",
-  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
-  				"env" => {"PASS" => "blaa"}}
+  				@targethash
+#  				{"source" => "this", "dest" => "that", "action" => "full",
+#  				"options" => {"dry-run" => nil, "encryptkey" => "ABC"},
+#  				"env" => {"PASS" => "blaa"}}
+  		end
+  	end
+  
+  	describe "#convert_action" do
+  		it "returns an empty string if no action key" do
+  			@rup.convert_action({"one" => 1}).should be_a String
+  			@rup.convert_action({"one" => 1}).length.should == 0
   		end
   	end
   
