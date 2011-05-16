@@ -16,7 +16,7 @@ class Ruplicity
 	def initialize(config, backups, logger = nil)
 		@logger = logger || NullLogger.new
 		@envs_set = []
-		@config = clean_hash("config", config)
+		@config = clean_hash("config hash", config)
 		if @config.has_key?("options") and @config["options"].has_key?("name")
 			@config["options"].delete("name")
 		end
@@ -44,7 +44,7 @@ class Ruplicity
 	end
 
 	def clean_hash(name, backup)
-		goodkeys = ["source", "dest", "action", "options", "env", "name"]
+		goodkeys = ["source", "dest", "action", "options", "env", "name", "passphrase"]
 		goodactions = %w(cleanup collection-status full incr list-current-files
 			remove-older-than remove-all-but-n-full remove-all-inc-of-but-n-full 
 			verify)
@@ -55,6 +55,9 @@ class Ruplicity
 			when (not goodkeys.include? k ) : true
 			else false
 			end
+		end
+		if backup.has_key?("passphrase") and backup["passphrase"].kind_of? String
+			backup["passphrase"] = {"default" => backup["passphrase"]}
 		end
 		if backup.has_key?("action") and 
 			(not goodactions.include?(backup["action"]))
@@ -67,7 +70,8 @@ class Ruplicity
 	def convert_env(backup)
 		res = {}
 		backup.fetch("env", {}).each do |k,v|
-			res[k.upcase] = v
+#			res[k.upcase] = v
+			res[k] = v
 		end
 		res
 	end
