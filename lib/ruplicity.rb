@@ -68,8 +68,6 @@ class Ruplicity
 	end
 
 	def check_action(backup, name)
-		goodactionkeys = %w(remove-older-than remove-all-but-n-full
-			remove-all-inc-of-but-n-full)
 		action = backup["action"]
 		case
 		when (action.kind_of? String)
@@ -92,15 +90,17 @@ class Ruplicity
 		end
 	end
 
-#	def check_action_hash(action_hash, name)
-#		length = action_hash.keys.length
-#		if length == 0 or length > 1
-#			raise ArgumentError
-#		end
-#		unless gdkeys.include?(action_hash.keys[0])
-#			raise ArgumentError
-#		end
-#	end
+	def check_action_hash(action_hash, name)
+		goodactionkeys = %w(remove-older-than remove-all-but-n-full
+			remove-all-inc-of-but-n-full)
+		length = action_hash.keys.length
+		if length == 0 or length > 1
+			raise ArgumentError
+		end
+		unless goodactionkeys.include?(action_hash.keys[0])
+			raise ArgumentError
+		end
+	end
 
 	def convert_env(backup)
 		res = {}

@@ -116,6 +116,26 @@ describe Ruplicity do
 				end
   		end
   	end
+
+  	describe "#check_action_hash" do
+  		it "should raise an error on an empty hash" do
+  			@h = {}
+				lambda { @rup.check_action_hash(@h, "actiontest") }.should raise_error(
+					ArgumentError)
+  		end
+
+  		it "should raise an error with more than one item" do
+  			@h = {"remove-older-than" => "3", "remove-all-but-n-full" => "5"}
+				lambda { @rup.check_action_hash(@h, "actiontest") }.should raise_error(
+					ArgumentError)
+  		end
+
+  		it "should raise an error with not accepted key" do
+  			@h = {"badkey" => "3"}
+				lambda { @rup.check_action_hash(@h, "actiontest") }.should raise_error(
+					ArgumentError)
+  		end
+  	end
   
   	describe "#convert_env" do
   		it "returns an empty hash if no env key" do
