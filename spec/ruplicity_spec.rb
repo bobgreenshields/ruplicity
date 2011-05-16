@@ -75,6 +75,32 @@ describe Ruplicity do
   			
   		end
   	end
+
+  	describe "#check_action" do
+  		before(:each) do
+  			@rup.stub(:check_action_string)
+  			@rup.stub(:check_action_hash)
+  		end
+
+  		it "should raise an error if action value is not a string or hash" do
+  			@gdhash["action"] = 23
+				lambda { @rup.check_action(@gdhash, "actiontest") }.should raise_error(
+					ArgumentError)
+					
+  		end
+
+  		it "should not raise an error if action value is a string" do
+  			@gdhash["action"] = "full"
+				lambda { @rup.check_action(@gdhash, "actiontest") }.should_not raise_error
+  		end
+
+  		it "should not raise an error if action value is a hash" do
+  			@gdhash["action"] = {"remove-older-than" => "5"}
+				lambda { @rup.check_action(@gdhash, "actiontest") }.should_not raise_error
+  		end
+
+
+  	end
   
   	describe "#convert_env" do
   		it "returns an empty hash if no env key" do
@@ -108,6 +134,10 @@ describe Ruplicity do
   				@gdhash) }.should raise_error ArgumentError
   		end
 
+  		it "should return an array" do
+  			@rup.convert_options(@gdhash).should be_a Array
+  		end
+
   		it "returns name option if no options key" do
   			@gdhash.delete "options"
   			@rup.convert_options(
@@ -129,7 +159,7 @@ describe Ruplicity do
   
   	describe "#merge_backup" do
   		before(:each) do
-  			@config = { "options" => {"encryptkey" => "DEF"},
+  			@config = { "options" => {"encryptkey" => "DEF", "verify" => ""},
   				"env" => {"PASS" => "hello", "SIGN" => "this"},
   				"passphrase" => {"default" => "mypassword"}}
   		end
@@ -149,6 +179,8 @@ describe Ruplicity do
   		it "adds items from config keys to ones in backup" do
   			@rup.merge_backup(@config, @gdhash )["env"].has_key?("SIGN").should be_true
   			@rup.merge_backup(@config, @gdhash )["env"]["SIGN"].should == "this"
+  			@rup.merge_backup(@config, @gdhash )["options"].has_key?("verify").should be_true
+  			@rup.merge_backup(@config, @gdhash )["options"]["verify"].should == ""
   		end
   
   		it "adds new hashes" do
@@ -185,33 +217,33 @@ describe Ruplicity do
 
 				it { should be_a String }
 
-	#  		context "with its result split into words" do
-	#				context "with an action specified" do
-	#					before(:each) do
-	#						@cmdwords = @rup.cmd(@back).split
-	#					end
-	#
-	#					it "should have duplicity as its first word" do
-	#						@cmdwords[0].should == "duplicity"
-	#					end
-	#
-	#					it "should have the action as its second word" do
-	#						@cmdwords[1].should == "incr"
-	#					end
-	#
-	#					it "should have the options after its second word" do
-	#						@cmdwords[2..6].should == ["--name", "one", "--encrypt-key",
-	#							"ABC", "--dry-run"]
-	#					end
-	#
-	#					it "should have the source as its next to last word" do
-	#						@cmdwords[-2].should == "here"
-	#					end
-	#
-	#					it "should have the dest as its last word" do
-	#						@cmdwords[-1].should == "there"
-	#					end
-	#				end
+	  		context "with its result split into words" do
+					context "with an action specified" do
+						before(:each) do
+							@cmdwords = @rup.cmd(@gdhash).split
+						end
+	
+						it "should have duplicity as its first word" do
+							@cmdwords[0].should == "duplicity"
+						end
+	
+						it "should have the action as its second word" do
+							@cmdwords[1].should == "full"
+						end
+	
+						it "should have the options after its second word" do
+							@cmdwords[2..6].should == ["--name", "one", "--encrypt-key",
+								"ABC", "--dry-run"]
+						end
+	
+						it "should have the source as its next to last word" do
+							@cmdwords[-2].should == "this"
+						end
+	
+						it "should have the dest as its last word" do
+							@cmdwords[-1].should == "that"
+						end
+					end
 	#
 	#				context "with no action specified" do
 	#					before(:each) do
@@ -236,7 +268,7 @@ describe Ruplicity do
 	#						@cmdwords[-1].should == "there"
 	#					end
 	#				end
-	#			end
+				end
 			end
   	end
 

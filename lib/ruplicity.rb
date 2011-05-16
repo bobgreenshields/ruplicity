@@ -45,8 +45,8 @@ class Ruplicity
 
 	def clean_hash(name, backup)
 		goodkeys = ["source", "dest", "action", "options", "env", "name", "passphrase"]
-		goodactions = %w(cleanup collection-status full incr list-current-files
-			remove-older-than remove-all-but-n-full remove-all-inc-of-but-n-full 
+		goodactions= %w(cleanup collection-status full incr list-current-files
+			remove-older-than remove-all-but-n-full remove-all-inc-of-but-n-full
 			verify)
 		backup.delete_if do |k,v|
 			case
@@ -66,6 +66,41 @@ class Ruplicity
 		end
 		backup
 	end
+
+	def check_action(backup, name)
+		goodactionkeys = %w(remove-older-than remove-all-but-n-full
+			remove-all-inc-of-but-n-full)
+		action = backup["action"]
+		case
+		when (action.kind_of? String)
+			check_action_string(action, name)
+		when (action.kind_of? Hash)
+			check_action_hash (action, name)
+		else
+			raise ArgumentError
+		end
+#		unless ([String, Hash].include?(backup["action"].class)) 
+#			raise ArgumentError
+#		end
+	end
+
+	def check_action_string(action_string, name)
+		goodactionstr = %w(cleanup collection-status full incr list-current-files
+			verify)
+		unless goodactionstr.include?(action_string)
+			raise ArgumentError
+		end
+	end
+
+#	def check_action_hash(action_hash, name)
+#		length = action_hash.keys.length
+#		if length == 0 or length > 1
+#			raise ArgumentError
+#		end
+#		unless gdkeys.include?(action_hash.keys[0])
+#			raise ArgumentError
+#		end
+#	end
 
 	def convert_env(backup)
 		res = {}
