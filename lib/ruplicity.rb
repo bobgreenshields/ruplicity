@@ -31,6 +31,10 @@ class Ruplicity
 		end
 	end
 
+	def log
+		@logger
+	end
+
 	def backup(name)
 		@backups[name]
 	end
@@ -106,12 +110,12 @@ class Ruplicity
 		name = backup["name"]
 		exitcode = res[:exitcode]
 		if exitcode == 0
-			@logger.info("SUMMARY: #{name}: ran successfully")
+			log.info("SUMMARY: #{name}: ran successfully")
 		else
-			@logger.error("SUMMARY: #{name}: exited with error code #{exitcode}")
+			log.error("SUMMARY: #{name}: exited with error code #{exitcode}")
 		end
-		res[:stdout].each_line { |line| @logger.info("#{name}: #{line}") }
-		res[:stderr].each_line { |line| @logger.error("#{name}: #{line}") }
+		res[:stdout].each_line { |line| log.info("#{name}: #{line}") }
+		res[:stderr].each_line { |line| log.error("#{name}: #{line}") }
 		res
 	end
 
