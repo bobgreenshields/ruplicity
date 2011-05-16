@@ -98,8 +98,23 @@ describe Ruplicity do
   			@gdhash["action"] = {"remove-older-than" => "5"}
 				lambda { @rup.check_action(@gdhash, "actiontest") }.should_not raise_error
   		end
+  	end
 
+  	describe "#check_action_string" do
+  		it "should not raise an error if string is accepted value" do
+				goodstr = %w(cleanup full incr list-current-files verify)
+				goodstr.each do |s|
+					lambda { @rup.check_action_string(s, "actiontest") }.should_not raise_error
+				end
+  		end
 
+  		it "should raise an error if string is not an accepted value" do
+				goodstr = %w(this that)
+				goodstr.each do |s|
+					lambda { @rup.check_action_string(s, "actiontest") }.should raise_error(
+						ArgumentError)
+				end
+  		end
   	end
   
   	describe "#convert_env" do
