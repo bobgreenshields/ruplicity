@@ -80,6 +80,24 @@ class Ruplicity
 		end
 	end
 
+	def process_action_hash(val, name)
+		actnoval = %w(cleanup collection-status full incr list-current-files
+			verify)
+		actwval = %w(remove-older-than remove-all-but-n-full
+			remove-all-inc-of-but-n-full)
+		val.each do |k,v|
+			keystr = k.chomp.downcase
+			case 
+			when actnoval.include?(keystr)
+				process_action_string(keystr, name)
+			else
+				raise (ArgumentError,
+					"Backup #{name} called with an unknown action of #{val}")
+			end
+		end
+
+	end
+
 	def clean_hash(name, backup)
 		goodkeys = ["source", "dest", "action", "options", "env", "name", "passphrase"]
 		goodactions= %w(cleanup collection-status full incr list-current-files

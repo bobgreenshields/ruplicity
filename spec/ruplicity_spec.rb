@@ -78,7 +78,28 @@ describe Ruplicity do
 				lambda { @rup.process_action_string("value", "name")  }.should raise_error(
 					ArgumentError)
 			end
+		end
+
+		describe "#process_action_hash" do
+			before(:each) do
+				@actnoval = %w(cleanup collection-status full incr list-current-files
+					verify)
+				@actwval = %w(remove-older-than remove-all-but-n-full
+					remove-all-inc-of-but-n-full)
+				@act = @actnoval + @actwval
+			end
+
+			it "should call process_action_string when no value action key" do
+				@rup.stub(:process_action_string)
+				@rup.should_receive(:process_action_string)
+				@rup.process_action({"incr" => "ignore"}, "name")
+			end
 			
+			it "should raise an error if value not a valid action" do
+				lambda { @rup.process_action_hash(
+					{"value" => "bad"}, "name")  }.should raise_error(
+					ArgumentError)
+			end
 		end
 
 
