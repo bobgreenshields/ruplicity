@@ -43,6 +43,43 @@ class Ruplicity
 		@backups.keys
 	end
 
+	def process_source(val, name)
+		val
+	end
+
+	alias process_target process_source
+
+	def process_action(val, name)
+		@actnoval = %w(cleanup collection-status full incr list-current-files
+			verify)
+		@actwval = %w(remove-older-than remove-all-but-n-full
+			remove-all-inc-of-but-n-full)
+		@act = @actnoval + @actwval
+		case val
+		when String
+			process_action_string(val, name)
+		when Hash
+			process_action_hash(val, name)
+		else
+			raise(ArgumentError,
+				"Backup #{name} has an action value which is not a string or hash")
+		end
+	end
+
+	def process_action_string(val, name)
+		actnoval = %w(cleanup collection-status full incr list-current-files
+			verify)
+		actwval = %w(remove-older-than remove-all-but-n-full
+			remove-all-inc-of-but-n-full)
+		valstr = val.chomp.downcase
+		case 
+		when actnoval.include?(valstr) then valstr
+		else
+			raise (ArgumentError,
+				"Backup #{name} called with an unknown action of #{val}")
+		end
+	end
+
 	def clean_hash(name, backup)
 		goodkeys = ["source", "dest", "action", "options", "env", "name", "passphrase"]
 		goodactions= %w(cleanup collection-status full incr list-current-files

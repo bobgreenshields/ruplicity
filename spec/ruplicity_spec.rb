@@ -14,6 +14,100 @@ describe Ruplicity do
 			@targethash = @gdhash
   	end
   
+		describe "#process_source" do
+			it "should return a string" do
+					@rup.process_source("file:///thisdir", "test").should be_a String
+			end
+
+			it "should return the value string" do
+				@val = "file:///thisdir"
+					@rup.process_source(@val, "test").should == @val
+			end
+		end
+
+		describe "#process_target" do
+			it "should return a string" do
+					@rup.process_target("file:///thisdir", "test").should be_a String
+			end
+
+			it "should return the value string" do
+				@val = "file:///thisdir"
+					@rup.process_target(@val, "test").should == @val
+			end
+		end
+
+		describe "#process_action" do
+			it "should call process_action_string when passed a string" do
+				@rup.stub(:process_action_string)
+				@rup.should_receive(:process_action_string)
+				@rup.process_action("value", "name")
+			end
+
+			it "should call process_action_hash when passed a hash" do
+				@rup.stub(:process_action_hash)
+				@rup.should_receive(:process_action_hash)
+				@rup.process_action({"value" => "new"}, "name")
+			end
+
+			it "should raise an error if value not a string or hash" do
+				lambda { @rup.process_action("value", "name")  }.should raise_error(
+					ArgumentError)
+			end
+		end
+
+		describe "#process_action_string" do
+			before(:each) do
+				@actnoval = %w(cleanup collection-status full incr list-current-files
+					verify)
+				@actwval = %w(remove-older-than remove-all-but-n-full
+					remove-all-inc-of-but-n-full)
+				@act = @actnoval + @actwval
+			end
+
+			it "return value if a good action" do
+				@actnoval.each do |a|
+					@rup.process_action_string(a, "name").should == a
+				end
+			end
+
+			it "should downcase a good action value" do
+				@rup.process_action_string("FULL", "name").should == "full"
+			end
+
+			it "should raise an error if value not a valid action" do
+				lambda { @rup.process_action_string("value", "name")  }.should raise_error(
+					ArgumentError)
+			end
+			
+		end
+
+
+#  	describe "#check_action" do
+#  		before(:each) do
+#  			@rup.stub(:check_action_string)
+#  			@rup.stub(:check_action_hash)
+#  		end
+#
+#  		it "should raise an error if action value is not a string or hash" do
+#  			@gdhash["action"] = 23
+#				lambda { @rup.check_action(@gdhash, "actiontest") }.should raise_error(
+#					ArgumentError)
+#					
+#  		end
+#
+#  		it "should not raise an error if action value is a string" do
+#  			@gdhash["action"] = "full"
+#				lambda { @rup.check_action(@gdhash, "actiontest") }.should_not raise_error
+#  		end
+#
+#  		it "should not raise an error if action value is a hash" do
+#  			@gdhash["action"] = {"remove-older-than" => "5"}
+#				lambda { @rup.check_action(@gdhash, "actiontest") }.should_not raise_error
+#  		end
+#  	end
+
+
+
   	describe "#clean_hash" do
   		it "leaves correct keys unchanged" do
   			@rup.clean_hash("test", @gdhash).should == @targethash
