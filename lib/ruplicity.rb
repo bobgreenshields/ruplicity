@@ -50,11 +50,6 @@ class Ruplicity
 	alias process_target process_source
 
 	def process_action(val, name)
-		@actnoval = %w(cleanup collection-status full incr list-current-files
-			verify)
-		@actwval = %w(remove-older-than remove-all-but-n-full
-			remove-all-inc-of-but-n-full)
-		@act = @actnoval + @actwval
 		case val
 		when String
 			process_action_string(val, name)
@@ -69,14 +64,12 @@ class Ruplicity
 	def process_action_string(val, name)
 		actnoval = %w(cleanup collection-status full incr list-current-files
 			verify)
-		actwval = %w(remove-older-than remove-all-but-n-full
-			remove-all-inc-of-but-n-full)
 		valstr = val.chomp.downcase
-		case 
-		when actnoval.include?(valstr) then valstr
+		if actnoval.include?(valstr)
+			valstr
 		else
-			raise (ArgumentError,
-				"Backup #{name} called with an unknown action of #{val}")
+			raise(ArgumentError,
+				"Backup #{name} called with an unknown action string of #{val}")
 		end
 	end
 
@@ -85,17 +78,25 @@ class Ruplicity
 			verify)
 		actwval = %w(remove-older-than remove-all-but-n-full
 			remove-all-inc-of-but-n-full)
-		val.each do |k,v|
-			keystr = k.chomp.downcase
-			case 
-			when actnoval.include?(keystr)
-				process_action_string(keystr, name)
-			else
-				raise (ArgumentError,
-					"Backup #{name} called with an unknown action of #{val}")
-			end
+		unless val.keys.length == 1
+			raise(ArgumentError, "Backup #{name} has more or less than one action")
 		end
-
+		keystr = val.keys[0].chomp.downcase
+		case 
+		when actnoval.include?(keystr)
+			process_action_string(keystr, name)
+		when actwval.include?(keystr)
+			hashval= val[val.keys[0]]
+			unless hashval.kind_of?(String) and hashval.chomp.length > 0
+				raise(ArgumentError, "Backup #{name} passed action #{keystr} requiring a
+							string value, was passed #{hashval}")
+			end
+			hashvalstr = hashval.chomp
+			"#{keystr} #{hashvalstr}"
+		else
+			raise(ArgumentError,
+				"Backup #{name} called with an unknown action of #{val}")
+		end
 	end
 
 	def clean_hash(name, backup)
@@ -128,7 +129,7 @@ class Ruplicity
 		when (action.kind_of? String)
 			check_action_string(action, name)
 		when (action.kind_of? Hash)
-			check_action_hash (action, name)
+			check_action_hash(action, name)
 		else
 			raise ArgumentError
 		end

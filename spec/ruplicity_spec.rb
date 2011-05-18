@@ -8,7 +8,8 @@ describe Ruplicity do
 #  		@log = Testlogger.new
 #  		@rup = Ruplicity.new({},{}, @log)
   		@rup = Ruplicity.new({},{})
-			@gdhash = {"source" => "this", "dest" => "that", "action" => "full", "name" => "gdhash",
+			@gdhash = {"source" => "this", "dest" => "that", "action" => "full",
+				"name" => "gdhash",
 				"options" => {"dry-run" => nil, "empty" => "", "encryptkey" => "ABC"},
 				"env" => {"PASS" => "blaa", "2nd" => "doom"}}
 			@targethash = @gdhash
@@ -86,7 +87,18 @@ describe Ruplicity do
 					verify)
 				@actwval = %w(remove-older-than remove-all-but-n-full
 					remove-all-inc-of-but-n-full)
-				@act = @actnoval + @actwval
+			end
+
+			it "should raise an error if it has more than one element" do
+				toolong = {"full" => "", "incr" => ""}
+				lambda { @rup.process_action_hash(
+					toolong, "test") }.should raise_error(ArgumentError)
+			end
+
+			it "should raise an error if it has no elements" do
+				tooshort = {}
+				lambda { @rup.process_action_hash(
+					tooshort, "test") }.should raise_error(ArgumentError)
 			end
 
 			it "should call process_action_string when no value action key" do
@@ -97,7 +109,33 @@ describe Ruplicity do
 			
 			it "should raise an error if value not a valid action" do
 				lambda { @rup.process_action_hash(
-					{"value" => "bad"}, "name")  }.should raise_error(
+					{"value" => "bad"}, "name")  }.should raise_error(ArgumentError)
+			end
+
+			it "should return action if value not needed" do
+				@actnoval.each do |a|
+					val = {a => "ignore"}
+					@rup.process_action_hash(val, "testname").should == a
+				end
+			end
+
+			it "should should append a space and the value to the action name" do
+				hashval = "22"
+				@actwval.each do |a|
+					val = {a => hashval}
+					@rup.process_action_hash(val, "testname").should == "#{a} #{hashval}"
+				end
+			end
+
+			it "should raise an error if action value needed but not supplied" do
+				lambda { @rup.process_action_hash(
+					{"remove-older-than" => ""}, "name")  }.should raise_error(
+					ArgumentError)
+			end
+
+			it "should raise an error if action value needed but nil supplied" do
+				lambda { @rup.process_action_hash(
+					{"remove-older-than" => nil}, "name")  }.should raise_error(
 					ArgumentError)
 			end
 		end
