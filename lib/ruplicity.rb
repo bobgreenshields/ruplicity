@@ -64,7 +64,7 @@ class Ruplicity
 	def process_action_string(val, name)
 		actnoval = %w(cleanup collection-status full incr list-current-files
 			verify)
-		valstr = val.chomp.downcase
+		valstr = val.strip.downcase
 		if actnoval.include?(valstr)
 			valstr
 		else
@@ -81,23 +81,26 @@ class Ruplicity
 		unless val.keys.length == 1
 			raise(ArgumentError, "Backup #{name} has more or less than one action")
 		end
-		keystr = val.keys[0].chomp.downcase
+		keystr = val.keys[0].strip.downcase
 		case 
 		when actnoval.include?(keystr)
 			process_action_string(keystr, name)
 		when actwval.include?(keystr)
 			hashval= val[val.keys[0]]
-			unless hashval.kind_of?(String) and hashval.chomp.length > 0
+			unless hashval.kind_of?(String) and hashval.strip.length > 0
 				raise(ArgumentError, "Backup #{name} passed action #{keystr} requiring a
 							string value, was passed #{hashval}")
 			end
-			hashvalstr = hashval.chomp
+			hashvalstr = hashval.strip
 			"#{keystr} #{hashvalstr}"
 		else
 			raise(ArgumentError,
 				"Backup #{name} called with an unknown action of #{val}")
 		end
 	end
+
+
+
 
 	def clean_hash(name, backup)
 		goodkeys = ["source", "dest", "action", "options", "env", "name", "passphrase"]
