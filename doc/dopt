@@ -1,0 +1,57 @@
+       --allow-source-mismatch
+       --archive-dir path
+       --asynchronous-upload
+       --dry-run
+       --encrypt-key key
+       --exclude shell_pattern
+       --exclude-device-files
+       --exclude-filelist filename
+       --exclude-filelist-stdin
+       --exclude-globbing-filelist filename
+       --exclude-if-present filename
+       --exclude-other-filesystems
+       --exclude-regexp regexp
+       --extra-clean
+       --file-to-restore path
+       --full-if-older-than time
+       --force
+       --ftp-passive
+       --ftp-regular
+       --gio
+       --ignore-errors
+       --imap-mailbox option
+       --gpg-options options
+       --include shell_pattern
+       --include-filelist filename
+       --include-filelist-stdin
+       --include-globbing-filelist filename
+       --include-regexp regexp
+       --log-fd number
+       --log-file filename
+       --name symbolicname
+       --no-encryption
+       --no-print-statistics
+       --null-separator
+       --num-retries number
+       --old-filenames
+       --rename orig new
+       --s3-european-buckets
+       --s3-unencrypted-connection
+       --s3-use-new-style
+       --scp-command command
+       --sftp-command command
+       --sign-key key
+       --ssh-askpass
+       --ssh-options options
+       --short-filenames
+       --tempdir directory
+       -ttime
+       --time time
+       --restore-time time
+       --time-separator char
+       --use-agent
+       --use-scp
+       -vverb
+       --verbosity verb
+       --version
+       --volsize number

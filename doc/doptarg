@@ -1,0 +1,32 @@
+--archive-dir path
+--encrypt-key key
+--exclude shell_pattern
+--exclude-filelist filename
+--exclude-globbing-filelist filename
+--exclude-if-present filename
+--exclude-regexp regexp
+--file-to-restore path
+--full-if-older-than time
+--imap-mailbox option
+--gpg-options options
+--include shell_pattern
+--include-filelist filename
+--include-globbing-filelist filename
+--include-regexp regexp
+--log-fd number
+--log-file filename
+--name symbolicname
+--num-retries number
+--rename orig new
+--scp-command command
+--sftp-command command
+--sign-key key
+--ssh-options options
+--tempdir directory
+-ttime
+--time time
+--restore-time time
+--time-separator char
+-vverb
+--verbosity verb
+--volsize number
