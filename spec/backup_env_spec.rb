@@ -85,4 +85,39 @@ describe "BackupEnv" do
 			end
 		end
 
+		describe "integration" do
+			context "with more than one backup env" do
+				before( :each ) do
+					h = {"one" => "1", "two" => "2"}
+					@env.fill h
+					h2 = {"TWO" => "two", "THREE" => "three"}
+					@env2 = BackupEnv.new
+					@env2.fill h2
+				end
+
+				describe "env" do
+					it "should have filled envs" do
+						@env.envs.should == {"ONE" => "1", "TWO" => "2"}
+					end
+				end
+
+				describe "#merge" do
+					it "should have added without overwriting" do
+						target = {"ONE" => "1", "TWO" => "2", "THREE" => "three"}
+						@env.merge @env2
+						@env.envs.should == target
+					end
+				end
+
+				describe "#inject" do
+					it "should have added and overwritten" do
+						target = {"ONE" => "1", "TWO" => "two", "THREE" => "three"}
+						@env.inject @env2
+						@env.envs.should == target
+					end
+				end
+			end
+		end
+
+
 end
