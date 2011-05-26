@@ -1,0 +1,28 @@
+Backup file
+{
+source:file:///home/bob/,
+target:file///bak/galactica/bob/,
+action:full,
+options:[exclude-device-files,
+{num-retries:5},
+s3-use-new-style],
+env:{THISENV:thisval}
+}
+
+Config file
+{
+options:{
+encrypt-key:ABCDEF,
+sign-key:FEDCBA
+}
+env:{THATENV:thatval},
+pass:phrasedefault
+}
+
+Pass file
+{
+pass:{
+backup:phrasebackup,
+restore:phraserestore
+}
+}
