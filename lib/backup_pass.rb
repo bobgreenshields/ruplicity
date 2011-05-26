@@ -1,4 +1,9 @@
+require 'base_env'
+
 class BackupPass
+
+	include BaseEnv
+
 	def initialize
 		@passkeys = %w(DEFAULT BACKUP RESTORE)
 	end
@@ -23,6 +28,17 @@ class BackupPass
 			raise ArgumentError, "Fill must be passed a hash or string to fill from not a #{fillval.class}"
 		end
 		fillval
+	end
+
+	def passphrase(action = :backup)
+		case 
+		when include?(action.to_s.upcase)
+			{"PASSPHRASE" => self[action.to_s.upcase]}
+		when include?("DEFAULT")
+			{"PASSPHRASE" => self["DEFAULT"]}
+		else
+			{}
+		end
 	end
 
 end

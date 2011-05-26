@@ -57,4 +57,65 @@ describe "BackupPass" do
 			end
 		end
 
+		describe "#fill" do
+			it "should populate with a DEFAULT hash when called with a string" do
+				val = "this"
+				@pass.fill val
+				@pass.should include "DEFAULT"
+				@pass["DEFAULT"].should == val
+			end
+		end
+
+		describe "#passphrase" do
+			before( :each ) do
+				@actions = [:backup, :restore]
+				
+			end
+			it "should return a hash" do
+				@pass.passphrase.should be_a Hash
+			end
+
+			context "before it is populated" do
+				it "should return an empty hash" do
+					@pass.passphrase.should == {}
+					@actions.each { |a| @pass.passphrase(a).should == {} }
+				end
+			end
+
+			context "when it has a DEFAULT value" do
+				before(:each) do
+					@val = "default"
+					@pass.fill @val
+				end
+				
+				context "when it only has a DEFAULT value" do
+					it "return that value when called" do
+						target = {"PASSPHRASE" => @val}
+						@pass.passphrase.should == target
+						@actions.each { |a| @pass.passphrase(a).should == target }
+					end
+				end
+
+				context "when it has values other than DEFAULT" do
+					before( :each ) do
+						@target = {}
+						@fill = {}
+						@actions.each do |a|
+							astr = a.to_s
+							@fill[astr.upcase] = astr
+							@target[a] = {"PASSPHRASE" => astr}
+						end
+						@pass.fill @fill
+					end
+
+					it "should return the non-DEFAULT value" do
+						@pass.passphrase.should == @target[:backup]
+						@actions.each { |a| @pass.passphrase(a).should == @target[a] }
+					end
+				end
+			end
+			
+		end
+
+
 end
