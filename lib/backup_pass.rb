@@ -1,29 +1,28 @@
 class BackupPass
 	def initialize
-		@passkeys = %w(default, backup, restore)
-		@pass = {}
+		@passkeys = %w(DEFAULT BACKUP RESTORE)
 	end
 
-	def include?(name)
-		@pass.key? name
-	end
-
-	def [](name)
-		@pass[name]
-	end
-
-	def add_item(name, val)
+	def check_add_item_args(name, val)
 		unless name.kind_of? String
-			raise ArgumentError, "The value #{name} is not a valid passphrase name"
+			raise ArgumentError, "Passphrase name must be a string, not value #{name}"
 		end
-		val = "" if val.nil?
+		unless @passkeys.include? name.upcase
+			raise ArgumentError, "A passphrase must be one of #{@passkeys.join(" ")}, not #{name}"
+		end
 		unless val.kind_of? String
-			raise(ArgumentError, "The passphrase #{name} cannot be set with the " +
-				"value #{val}, must be a string")
+			raise(ArgumentError, "The passphrase #{name} cannot be set with " +
+				"the value #{val}, must be a string")
 		end
-#		key = env.upcase
-#		@pass[key] = val unless include?(key)
 	end
 
+	def check_fill_arg(fillval)
+		fillval = "" if fillval.nil?
+		fillval = {"DEFAULT" => fillval} if fillval.kind_of? String
+		unless fillval.kind_of? Hash
+			raise ArgumentError, "Fill must be passed a hash or string to fill from not a #{fillval.class}"
+		end
+		fillval
+	end
 
 end
