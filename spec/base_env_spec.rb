@@ -83,53 +83,74 @@ describe "BaseEnv" do
 			@fillval = {"TWO" => "2", "THREE" => "3"}
 			@env.stub(:check_fill_arg).and_return(@fillval)
 			@env.fill @fillval
-			@fillval2 = {"ONE" => "one", "TWO" => "two"}
 			@env2 = Object.new
 			@env2.extend(BaseEnv)
 			@env2.stub(:check_add_item_args)
-			@env2.stub(:check_fill_arg).and_return(@fillval2)
-			@env2.fill @fillval2
 		end
 
-		it "should have populated env2" do
-			@env2.should include "ONE"
-			@env2["ONE"].should == "one"
-		end
-
-		describe "#merge" do
+		context "with another populated env" do
 			before( :each ) do
-				@env.stub(:check_fill_arg).and_return(@env2.envs)
-				@env.merge @env2
+				@fillval2 = {"ONE" => "one", "TWO" => "two"}
+				@env2.stub(:check_fill_arg).and_return(@fillval2)
+				@env2.fill @fillval2
 			end
 
-			it "should not overwrite original values" do
-				@env["TWO"].should == "2"
-				@env["THREE"].should == "3"
+			it "should have populated env2" do
+				@env2.should include "ONE"
+				@env2["ONE"].should == "one"
 			end
 
-			it "should add new values" do
-				@env.should include "ONE"
-				@env["ONE"].should == "one"
+			describe "#merge" do
+				before( :each ) do
+					@env.stub(:check_fill_arg).and_return(@env2.envs)
+					@env.merge @env2
+				end
+
+				it "should not overwrite original values" do
+					@env["TWO"].should == "2"
+					@env["THREE"].should == "3"
+				end
+
+				it "should add new values" do
+					@env.should include "ONE"
+					@env["ONE"].should == "one"
+				end
+			end
+
+			describe "#inject" do
+				before( :each ) do
+					@env.stub(:check_fill_arg).and_return(@env2.envs)
+					@env.inject @env2
+				end
+
+				it "should add new values" do
+					@env.should include "ONE"
+					@env["ONE"].should == "one"
+				end
+
+				it "should not delete if no new value" do
+					@env["THREE"].should == "3"
+				end
+
+				it "should overwrite original values with new ones" do
+					@env["TWO"].should == "two"
+				end
 			end
 		end
 
-		describe "#inject" do
-			before( :each ) do
-				@env.stub(:check_fill_arg).and_return(@env2.envs)
-				@env.inject @env2
+		context "with an empty additional arg" do
+			it "env2 should be empty" do
+				@env2.envs.should == {}
 			end
+			describe "#merge" do
+				before( :each ) do
+					@env.stub(:check_fill_arg).and_return(@env2.envs)
+					@env.merge @env2
+				end
 
-			it "should add new values" do
-				@env.should include "ONE"
-				@env["ONE"].should == "one"
-			end
-
-			it "should not delete if no new value" do
-				@env["THREE"].should == "3"
-			end
-
-			it "should overwrite original values with new ones" do
-				@env["TWO"].should == "two"
+				it "should not change" do
+					@env.envs.should == @fillval
+				end
 			end
 		end
 
