@@ -60,11 +60,13 @@ class BackupOptions
 	end
 
 	def check_add_option_item_args(name, val)
-		
-
-
-
-#				"Invalid option name of #{bad_opt_name}")
+		unless name.kind_of? String
+			raise(ArgumentError, "Option name must be a string not value of #{name}")
+		end
+		opts = @no_arg + @w_arg
+		unless opts.include?(name)
+			raise(ArgumentError, "Invalid option name of #{name}")
+		end
 	end
 
 	

@@ -72,6 +72,14 @@ describe BackupOptions do
 				}.should raise_error(ArgumentError,
 				"Invalid option name of #{bad_opt_name}")
 		end
+
+		it "should raise an error if the name is not a string" do
+			bad_opt_name = 12
+			lambda { @opts.check_add_option_item_args(bad_opt_name, "this")
+				}.should raise_error(ArgumentError,
+				"Option name must be a string not value of #{bad_opt_name}")
+			
+		end
 	end
 
 end
