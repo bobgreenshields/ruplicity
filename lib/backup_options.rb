@@ -37,7 +37,8 @@ class BackupOptions
 	def add_string_option(inp_opt)
 		opt = inp_opt.downcase
 		if opt_w_arg?(opt)
-			raise ArgumentError, "Option #{opt} should be passed with a value"
+			raise(ArgumentError, "Option #{opt} can't be added as a string," +
+				"it should be passed with a value")
 		end
 		unless opt_no_arg?(opt)
 			raise ArgumentError, "#{opt} is an unknown option"
@@ -50,8 +51,20 @@ class BackupOptions
 
 	def add_hash_option(opt_hash)
 		unless opt_hash.keys.length == 1
-			raise ArguementError, "Option hash should have one element only"
+			raise ArgumentError, "Option hash should have one element only"
 		end
+	end
+
+	def add_option_item(name, val)
+		val = "" if val.nil?
+	end
+
+	def check_add_option_item_args(name, val)
+		
+
+
+
+#				"Invalid option name of #{bad_opt_name}")
 	end
 
 	

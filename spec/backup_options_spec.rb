@@ -44,25 +44,34 @@ describe BackupOptions do
 				ArgumentError, "bad is an unknown option")
 		end
 
-		it "should raise an error if option value missing" do
+		it "should raise an error if option should have a value" do
 			lambda { @opts.add_string_option("exclude") }.should raise_error(
-				ArgumentError, "Option exclude should be passed with a value")
+				ArgumentError, "Option exclude can't be added as a string," +
+					"it should be passed with a value")
 		end
 	end
 
 	describe "#add_hash_option" do
 		it "should raise an error if zero elements" do
-			lambda { @opts.add_hash_option({}) }.should raise_error(
+			empty = {}
+			lambda { @opts.add_hash_option(empty) }.should raise_error(
 				ArgumentError, "Option hash should have one element only")
 		end
 
 		it "should raise an error if more than one element" do
-			pending
 			opt = {"one" => "one", "two" => "two"}
 			lambda { @opts.add_hash_option({}) }.should raise_error(
 				ArgumentError, "Option hash should have one element only")
 		end
-		
+	end
+
+	describe "#check_add_option_item_args" do
+		it "should raise an error if unknown option name" do
+			bad_opt_name = "bad"
+			lambda { @opts.check_add_option_item_args(bad_opt_name, "this")
+				}.should raise_error(ArgumentError,
+				"Invalid option name of #{bad_opt_name}")
+		end
 	end
 
 end
