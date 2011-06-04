@@ -78,7 +78,100 @@ describe BackupOptions do
 			lambda { @opts.check_add_option_item_args(bad_opt_name, "this")
 				}.should raise_error(ArgumentError,
 				"Option name must be a string not value of #{bad_opt_name}")
-			
+		end
+
+		it "should raise an error if option needs a value and its not a string" do
+			bad_opt_value = 12
+			opt_name = "encrypt-key"
+			lambda { @opts.check_add_option_item_args(opt_name, bad_opt_value)
+				}.should raise_error(ArgumentError,
+				"Option #{opt_name} must have a string value not a value of " +
+					"#{bad_opt_value}")
+		end
+
+		it "should raise an error if option needs a value but given empty string" do
+			bad_opt_value = ""
+			opt_name = "encrypt-key"
+			lambda { @opts.check_add_option_item_args(opt_name, bad_opt_value)
+				}.should raise_error(ArgumentError,
+				"Option #{opt_name} must have a string value but given empty string")
+		end
+
+		it "should not raise an error if option needs no value and its not a string" do
+			bad_opt_value = 12
+			opt_name = "dry-run"
+			lambda { @opts.check_add_option_item_args(opt_name, bad_opt_value)
+				}.should_not raise_error
+		end
+	end
+
+	describe "add_option_item" do
+		before( :each ) do
+			@name_w_arg = "encrypt-key"
+			@name_no_arg = "dry-run"
+			@good_val = "1234ABCD"
+		end
+
+		it "should convert a nil value into the empty string" do
+			@opts.stub(:check_add_option_item_args)
+			@opts.should_receive(:check_add_option_item_args).with(@name_w_arg, "")
+			@opts.add_option_item(@name_w_arg, "")
+		end
+
+		it "should call check_add_option_item_args with name and value" do
+			@opts.stub(:check_add_option_item_args)
+			@opts.should_receive(:check_add_option_item_args).with(@name_w_arg, @good_val)
+			@opts.add_option_item(@name_w_arg, @good_val)
+		end
+
+			it "should include the new option after adding" do
+				@opts.add_option_item(@name_w_arg, @good_val)
+				@opts.should include @name_w_arg
+			end
+
+		context "with new and empty options" do
+			it "should have a length of zero" do
+				@opts.length.should == 0
+			end
+
+			it "should have the option in the first position after adding" do
+				@opts.add_option_item(@name_w_arg, @good_val).should == 0
+				@opts.position(@name_w_arg).should == 0
+			end
+
+			it "should have a length of one after adding" do
+				@opts.add_option_item(@name_w_arg, @good_val)
+				@opts.length.should == 1
+			end
+		end
+
+		context "with options already added" do
+			before( :each ) do
+				@opts.add_option_item("dry-run", "")
+				@opts.add_option_item("exclude-regexp", "tmp")
+				@opts.add_option_item("ignore-errors", "")
+			end
+
+			it "should have a length of 3 before adding" do
+				@opts.length.should == 3
+			end
+
+			it "should have a length of 4 after adding" do
+				@opts.add_option_item(@name_w_arg, @good_val)
+				@opts.length.should == 4
+			end
+
+			it "should have the new option at position 3" do
+				@opts.add_option_item(@name_w_arg, @good_val)
+				@opts.position(@name_w_arg).should == 3
+			end
+
+			it "should not add a duplicate option" do
+				@opts.add_option_item("exclude-regexp", "new")
+				@opts.length.should == 3
+				@opts.position("exclude-regexp").should == 1
+				@opts.option_arr[1]["exclude-regexp"].should == "tmp"
+			end
 		end
 	end
 

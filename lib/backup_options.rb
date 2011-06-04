@@ -1,4 +1,5 @@
 class BackupOptions 
+	attr_accessor :option_arr
 
 	def initialize
 		@options = {}
@@ -34,6 +35,10 @@ class BackupOptions
 		@options[opt.downcase]
 	end
 
+	def length
+		@option_arr.length
+	end
+
 	def add_string_option(inp_opt)
 		opt = inp_opt.downcase
 		if opt_w_arg?(opt)
@@ -57,6 +62,15 @@ class BackupOptions
 
 	def add_option_item(name, val)
 		val = "" if val.nil?
+		down_name = name.downcase
+		check_add_option_item_args(down_name, val)
+		if self.include?(down_name)
+			position down_name
+		else
+			@option_arr << {down_name => val}
+			@options[down_name] = @option_arr.length - 1
+			@option_arr.length - 1
+		end
 	end
 
 	def check_add_option_item_args(name, val)
@@ -66,6 +80,16 @@ class BackupOptions
 		opts = @no_arg + @w_arg
 		unless opts.include?(name)
 			raise(ArgumentError, "Invalid option name of #{name}")
+		end
+		if @w_arg.include?(name)
+			unless val.kind_of? String
+				raise(ArgumentError, "Option #{name} must have a string value " +
+					"not a value of #{val}")
+			end
+			if val == ""
+				raise(ArgumentError,
+					"Option #{name} must have a string value but given empty string")
+			end
 		end
 	end
 
