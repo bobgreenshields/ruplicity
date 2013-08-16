@@ -1,0 +1,39 @@
+require_relative '../set_errors'
+
+module Ruplicity
+
+	class ParseAction
+		include SetErrors
+
+		def action_list
+		end
+
+		def additional_checks(args)
+		end
+
+		def res_array(args)
+		end
+
+		def parses_this_action?(args)
+			if args.has_key?(:action)
+				action_list.include?(args[:action])
+			else
+#				post_error("No action key, cannot identify action to parse")
+#				false
+			end
+		end
+
+		def check_for_url(args)
+			if args.has_key?(:url)
+				true
+			else
+#				post_error("No url key, all actions require a url")
+#				false
+			end
+		end
+
+		def parse(args)
+		end
+	end
+
+end
