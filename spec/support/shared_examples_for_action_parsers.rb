@@ -26,7 +26,7 @@ shared_examples "an action parser" do
 		context "with no url key" do
 			it "should post an error" do
 				args.delete(:url)
-				parser.parse(args)
+				parser.parses_this_action?(args)
 				parser.errors.should have(1).error
 			end
 		end
