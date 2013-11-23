@@ -6,7 +6,8 @@ shared_examples "an action parser" do
 	it_behaves_like "a parser"
 
 	before :each do
-		@shared_parser_args =  {name: "test", action: "full", dir: "test_dir", url: "test_url"}
+		@options = ["--dry-run", "--encrypt-key BBBBBBBB"]
+		@shared_parser_args =  {name: "test", action: "full", dir: "test_dir", url: "test_url", options: @options}
 	end
 
 	describe "#parses_this_action?" do

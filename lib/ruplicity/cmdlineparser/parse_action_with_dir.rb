@@ -13,7 +13,11 @@ module Ruplicity
 		end
 
 		def res_array(args)
-
+			if %w(full incr).include?(args[:action])
+				[ args[:action] ] + args[:options] + [ args[:dir], args[:url] ]
+			else
+				[ args[:action] ] + args[:options] + [ args[:url], args[:dir] ]
+			end
 		end
 
 	end
