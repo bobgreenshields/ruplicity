@@ -6,15 +6,15 @@ module Ruplicity
 		include SetErrors
 
 		def action_list
-			raise "SubclassResponsibility"
+			raise "#action_list SubclassResponsibility"
 		end
 
 		def additional_checks(args)
-			raise "SubclassResponsibility"
+			raise "#additional_checks SubclassResponsibility"
 		end
 
 		def res_array(args)
-			raise "SubclassResponsibility"
+			raise "#res_array SubclassResponsibility"
 		end
 
 		def parses_this_action?(args)

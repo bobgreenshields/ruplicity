@@ -5,18 +5,22 @@ shared_examples "an action parser" do
 
 	it_behaves_like "a parser"
 
+	before :each do
+		@shared_parser_args =  {name: "test", action: "full", dir: "test_dir", url: "test_url"}
+	end
+
 	describe "#parses_this_action?" do
 		specify { parser.should respond_to(:parses_this_action?) }
 	end
 
-	let(:args) { {name: "test", action: "full", dir: "test_dir",
-		url: "test_url"} }
+#	let(:@shared_parser_args) { {name: "test", action: "full", dir: "test_dir",
+#		url: "test_url"} }
 
 	describe "#parses_this_action?" do
 		context "with no action key" do
 			it "should post an error" do
-				args.delete(:action)
-				parser.parses_this_action?(args)
+				@shared_parser_args.delete(:action)
+				parser.parses_this_action?(@shared_parser_args)
 				parser.errors.should have(1).error
 			end
 		end
@@ -25,8 +29,8 @@ shared_examples "an action parser" do
 	describe "#parse" do
 		context "with no url key" do
 			it "should post an error" do
-				args.delete(:url)
-				parser.parse(args)
+				@shared_parser_args.delete(:url)
+				parser.parse(@shared_parser_args)
 				parser.errors.should have(1).error
 			end
 		end
