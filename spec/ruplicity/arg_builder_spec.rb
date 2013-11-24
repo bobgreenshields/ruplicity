@@ -25,10 +25,37 @@ describe ArgBuilder do
 			argb.normalise_keys(@args)[:force].should eql(nil)
 			argb.normalise_keys(@args)[:dry_run].should eql(nil)
 		end
-
 	end
 
 
+	describe "#key_from_opt" do
+		let (:argb) { ArgBuilder.new }
 
+		it "should change any option into a key symbol" do
+			argb.key_from_opt("--dry-run").should eql(:dry_run)
+		end
+	end
+
+	describe "#argless_options_from_keys" do
+		let (:argb) { ArgBuilder.new }
+		before :each do
+			@args = {name: "new run", dry_run: nil, force: "this", dir: "test_dir", url: "test_url"}
+			@opts = ["--this this-val", "--dry-run"]
+		end
+
+		it "should return an option for a key if not present" do
+			args = {name: "new run", dry_run: nil, force: "this", s3_use_new_style: "that",
+				s3_european_buckets: nil}
+			opts = ["--this this-val"]
+			expected = %w(--dry-run --force --s3-use-new-style --s3-european-buckets)
+			argb.argless_options_from_keys(args, opts).should eql(expected)
+		end
+
+		it "should ignore a key if the option is already present" do
+			argb.argless_options_from_keys(@args, @opts).should_not include("--dry-run")
+			argb.argless_options_from_keys(@args, @opts).should include("--force")
+		end
+
+	end
 
 end
