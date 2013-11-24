@@ -1,5 +1,10 @@
 module Ruplicity
 	class OptionsCleaner
+		def self.clean(opts)
+			cleaner = self.new
+			cleaner.clean(opts)
+		end
+
 		def clean(opts)
 			opts.map! { |opt| clean_opt(opt) }
 		end
@@ -19,7 +24,4 @@ module Ruplicity
 			end
 		end
 	end
-
-
-
 end

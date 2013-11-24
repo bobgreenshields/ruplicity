@@ -15,8 +15,12 @@ describe OptionsCleaner do
 		it "should downcase the option but not the arguement if it has one" do
 			cln.clean(@opts)[2].should eql("--encrypt-key AB12345")
 		end
-
 	end
 
+	describe ".clean" do
+		it "should clean up an options array when called on the class" do
+			OptionsCleaner.clean(@opts).should eql(["--name Hello", "--dry-run", "--encrypt-key AB12345"])
+		end
+	end
 
 end
