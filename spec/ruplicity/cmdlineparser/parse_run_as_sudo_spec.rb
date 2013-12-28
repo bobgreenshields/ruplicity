@@ -25,13 +25,13 @@ describe ParseRunAsSudo do
 				end
 			end
 			context "with a value of trUe" do
-				let(:args) { {target: "target/path", run_as_sudo: "true"} }
+				let(:args) { {target: "target/path", run_as_sudo: "trUe"} }
 				it "should return sudo" do
 					parser.parse(args).should eql('sudo')
 				end
 			end
 			context "with a value of yeS" do
-				let(:args) { {target: "target/path", run_as_sudo: "true"} }
+				let(:args) { {target: "target/path", run_as_sudo: "yeS"} }
 				it "should return sudo" do
 					parser.parse(args).should eql('sudo')
 				end
