@@ -39,13 +39,14 @@ describe ArgBuilder do
 	describe "#argless_options_from_keys" do
 		let (:argb) { ArgBuilder.new }
 		before :each do
-			@args = {name: "new run", dry_run: nil, force: "this", dir: "test_dir", url: "test_url"}
+			@args = {name: "new run", dry_run: nil, force: "this", dir: "test_dir", 
+						url: "test_url"}
 			@opts = ["--this this-val", "--dry-run"]
 		end
 
 		it "should prepend an option for a key if not present" do
-			args = {name: "new run", dry_run: nil, force: "this", s3_use_new_style: "that",
-				s3_european_buckets: nil}
+			args = {name: "new run", dry_run: nil, force: "this", 
+					 s3_use_new_style: "that", s3_european_buckets: nil}
 			opts = ["--this this-val"]
 			expected = %w(--dry-run --force --s3-use-new-style --s3-european-buckets) + opts
 			argb.argless_options_from_keys(args, opts).should eql(expected)
@@ -66,15 +67,17 @@ describe ArgBuilder do
 		end
 
 		it "should return an option for a key if not present" do
-			expected = ["--name thisname", "--encrypt-key ABB12345", "--full-if-older-than 30days", 
-							  "--sign-key ABCDEF12", "--verbosity 8"] + @opts
+			expected = ["--name thisname", "--encrypt-key ABB12345", 
+							 "--full-if-older-than 30days", "--sign-key ABCDEF12", 
+							 "--verbosity 8"] + @opts
 			argb.options_with_args_from_keys(@args, @opts).should eql(expected)
 		end
 
 		it "should delete an option if present and prepend value from key" do
 			opts = @opts + ["--sign-key 12345678", "--verbosity 3"]
-			expected = ["--name thisname",  "--encrypt-key ABB12345", "--full-if-older-than 30days",
-							  "--sign-key ABCDEF12", "--verbosity 8"] + @opts
+			expected = ["--name thisname",  "--encrypt-key ABB12345", 
+							 "--full-if-older-than 30days", "--sign-key ABCDEF12", 
+							 "--verbosity 8"] + @opts
 			argb.options_with_args_from_keys(@args, opts).should eql(expected)
 
 		end
