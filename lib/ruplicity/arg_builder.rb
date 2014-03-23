@@ -1,5 +1,5 @@
 module Ruplicity
-	class ArgBuilder
+	class OptionsBuilder
 		def normalise_keys(args)
 			@res = {}
 			args.each_pair { | key, val | @res[normalise_key(key)] = val }
