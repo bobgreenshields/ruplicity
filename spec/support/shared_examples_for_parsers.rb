@@ -1,7 +1,7 @@
 require_relative './shared_examples_for_set_errors'
 
 shared_examples "a parser" do
-	let(:parser) { described_class.new }
+	let(:parser) { described_class.new({}) }
 
 	it_behaves_like "it can set_errors"
 

@@ -5,6 +5,10 @@ module Ruplicity
 	class ParseAction
 		include SetErrors
 
+		def initialize(args)
+			@args = args
+		end
+
 		def action_list
 			raise "#action_list SubclassResponsibility"
 		end

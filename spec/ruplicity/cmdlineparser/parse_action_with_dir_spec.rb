@@ -4,7 +4,11 @@ require_relative '../../../lib/ruplicity/cmdlineparser/parse_action_with_dir'
 describe ParseActionWithDir do
 	it_behaves_like "an action parser"
 
-	let(:parser) { described_class.new }
+#	let(:parser) { described_class.new(@args) }
+	def parser
+#		described_class.new(@args)
+		ParseActionWithDir.new(@args)
+	end
 
 	before :each do
 		@options = ["--dry-run", "--encrypt-key BBBBBBBB"]
@@ -55,6 +59,7 @@ describe ParseActionWithDir do
 			it "should post an error" do
 				@args.delete(:dir)
 				parser.parse(@args)
+				parser.post_error("this error")
 				parser.errors.should have(1).error
 			end
 		end

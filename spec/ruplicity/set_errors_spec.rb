@@ -46,23 +46,25 @@ describe SetErrorsTest do
 	end
 
 	context "with external error handler" do
-		let(:error_handler) { SetErrorsTest.new }
-		def errors_test
-			res = SetErrorsTest.new
-			res.error_poster = ->(error){ error_handler.post_error(error) }
-			res
+		before :each do
+			@top = SetErrorsTest.new
+			@bottom = SetErrorsTest.new
+			@bottom.fwd_errors_to(@top.errors)
 		end
-
+			
 		context "when an error is posted" do
 			before do
-				errors_test.post_error("New error")
+				@bottom.post_error("New error")
 			end
 
 			it "should post the error to the handler" do
-				error_handler.errors.should include("New error")
+				@top.errors.should include("New error")
+			end
+
+			it "should be visible from the bottom of the chain" do
+				@bottom.errors.should include("New error")
 			end
 		end
 	end
-
 
 end

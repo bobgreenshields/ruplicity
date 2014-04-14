@@ -1,6 +1,5 @@
 module Ruplicity
 	module SetErrors
-		attr_writer :error_poster
 
 		def has_no_errors?
 			errors.empty?
@@ -11,15 +10,15 @@ module Ruplicity
 		end
 
 		def post_error(error)
-			if @error_poster
-				@error_poster.call(error)
-			else
-				errors << error
-			end
+			errors << error
 		end
 
 		def errors
 			@errors ||= []
+		end
+
+		def fwd_errors_to(error_store)
+			@errors = error_store
 		end
 	end
 end
