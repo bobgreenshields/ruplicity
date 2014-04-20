@@ -2,7 +2,7 @@ require_relative '../set_errors'
 
 module Ruplicity
 
-	class CmdParser
+	class CmdBuilder
 		include SetErrors
 
 		def initialize(args)

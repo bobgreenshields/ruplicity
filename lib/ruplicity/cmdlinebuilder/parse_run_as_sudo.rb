@@ -1,9 +1,9 @@
 require_relative '../set_errors'
-require_relative './cmd_parser'
+require_relative './cmd_builder'
 
 module Ruplicity
 
-	class ParseRunAsSudo < CmdParser
+	class BuildRunAsSudo < CmdBuilder
 
 		private
 

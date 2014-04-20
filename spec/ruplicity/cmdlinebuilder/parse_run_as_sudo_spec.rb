@@ -1,11 +1,11 @@
 require 'spec_helper'
-require_relative '../../../lib/ruplicity/cmdlinebuilder/parse_run_as_sudo'
+require_relative '../../../lib/ruplicity/cmdlinebuilder/build_run_as_sudo'
 
-describe ParseRunAsSudo do
+describe BuildRunAsSudo do
 	it_behaves_like "a cmd_parser"
 
-	def parser
-		ParseRunAsSudo.new(args)
+	def builder
+		BuildRunAsSudo.new(args)
 	end
 
 	describe "#cmd_arr" do
@@ -15,7 +15,7 @@ describe ParseRunAsSudo do
 			let(:args) { {target: "target/path", source: "source/path"} }
 
 			it "should return the array passed in" do
-				parser.cmd_arr(start_arr).should eql(start_arr)
+				builder.cmd_arr(start_arr).should eql(start_arr)
 			end
 		end
 
@@ -23,25 +23,25 @@ describe ParseRunAsSudo do
 			context "with a value of true" do
 				let(:args) { {target: "target/path", run_as_sudo: "true"} }
 				it "should return sudo" do
-					parser.cmd_arr(start_arr).should eql(prep_arr)
+					builder.cmd_arr(start_arr).should eql(prep_arr)
 				end
 			end
 			context "with a value of trUe" do
 				let(:args) { {target: "target/path", run_as_sudo: "trUe"} }
 				it "should return sudo" do
-					parser.cmd_arr(start_arr).should eql(prep_arr)
+					builder.cmd_arr(start_arr).should eql(prep_arr)
 				end
 			end
 			context "with a value of yeS" do
 				let(:args) { {target: "target/path", run_as_sudo: "yeS"} }
 				it "should return sudo" do
-					parser.cmd_arr(start_arr).should eql(prep_arr)
+					builder.cmd_arr(start_arr).should eql(prep_arr)
 				end
 			end
 			context "with a value other than true or yes (anycase)" do
 				let(:args) { {target: "target/path", run_as_sudo: "bnbdjhfjh"} }
 				it "should return the array passed in" do
-					parser.cmd_arr(start_arr).should eql(start_arr)
+					builder.cmd_arr(start_arr).should eql(start_arr)
 				end
 			end
 		end
