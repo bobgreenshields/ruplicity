@@ -7,10 +7,6 @@ module Ruplicity
 
 		private
 
-		def normalize_args
-			normalize_key :run_as_sudo
-		end
-
 		def uses_this_parser?
 			@args.has_key? :run_as_sudo
 		end
@@ -19,8 +15,8 @@ module Ruplicity
 		end
 
 		def run_as_sudo?
-			key = @args.fetch(:run_as_sudo, "false").to_s.downcase
-			%w(true yes).include?(key)
+			val = @args.fetch(:run_as_sudo, "false").to_s.downcase
+			%w(true yes).include?(val)
 		end
 
 		def amend_cmd_array(arr)

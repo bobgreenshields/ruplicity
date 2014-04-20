@@ -7,7 +7,6 @@ module Ruplicity
 
 		def initialize(args)
 			@args = args
-			normalize_args
 		end
 
     def cmd_arr(arr)
@@ -21,19 +20,6 @@ module Ruplicity
 
 		private
 
-		def normalize_key(sym_key)
-			str_key = sym_key.to_s
-			unless @args.has_key?(sym_key)
-				if @args.has_key?(str_key)
-					@args[sym_key] = @args[str_key]
-				end
-			end
-		end
-		
-		def normalize_args
-			raise "#normalize_args SubclassResponsibility"
-		end
-		
 		def uses_this_parser?
 			raise "#uses_this_parser? SubclassResponsibility"
 		end
