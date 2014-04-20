@@ -1,13 +1,11 @@
 require 'spec_helper'
-require_relative '../../../lib/ruplicity/cmdlinebuilder/parse_action_with_dir'
+require_relative '../../../lib/ruplicity/cmdlinebuilder/build_action_with_dir'
 
-describe ParseActionWithDir do
-	it_behaves_like "an action parser"
+describe BuildActionWithDir do
+	it_behaves_like "a cmd_builder"
 
-#	let(:parser) { described_class.new(@args) }
-	def parser
-#		described_class.new(@args)
-		ParseActionWithDir.new(@args)
+	def builder
+		BuildActionWithDir.new(@args)
 	end
 
 	before :each do
@@ -19,7 +17,7 @@ describe ParseActionWithDir do
 
 		context "with an action of full" do
 			it "should return the dir and url" do
-				parser.parse(@args).should eql([ @args[:action] ] + @options + [ @args[:dir], 
+				builder.parse(@args).should eql([ @args[:action] ] + @options + [ @args[:dir], 
 																																		 @args[:url] ])
 			end
 		end
@@ -27,7 +25,7 @@ describe ParseActionWithDir do
 		context "with an action of incr" do
 			it "should return the dir and url" do
 				@args[:action] = "incr"
-				parser.parse(@args).should eql([ @args[:action] ] + @options + [ @args[:dir], 
+				builder.parse(@args).should eql([ @args[:action] ] + @options + [ @args[:dir], 
 																																		 @args[:url] ])
 			end
 		end
@@ -35,7 +33,7 @@ describe ParseActionWithDir do
 		context "with an action of verify" do
 			it "should return the url and dir" do
 				@args[:action] = "verify"
-				parser.parse(@args).should eql([ @args[:action] ] + @options + [ @args[:url], 
+				builder.parse(@args).should eql([ @args[:action] ] + @options + [ @args[:url], 
 																																		 @args[:dir]])
 			end
 		end
@@ -43,14 +41,14 @@ describe ParseActionWithDir do
 		context "with an action of restore" do
 			it "should return the url and dir" do
 				@args[:action] = "restore"
-				parser.parse(@args).should eql([ @args[:action] ] + @options + [ @args[:url], 
+				builder.parse(@args).should eql([ @args[:action] ] + @options + [ @args[:url], 
 																																		 @args[:dir]])
 			end
 		end
 
 		it "should not return any errors" do
-			parser.parse(@args)
-				parser.errors.should have(0).error
+			builder.parse(@args)
+				builder.errors.should have(0).error
 		end
 
 
@@ -58,9 +56,9 @@ describe ParseActionWithDir do
 		context "with no dir key" do
 			it "should post an error" do
 				@args.delete(:dir)
-				parser.parse(@args)
-				parser.post_error("this error")
-				parser.errors.should have(1).error
+				builder.parse(@args)
+				builder.post_error("this error")
+				builder.errors.should have(1).error
 			end
 		end
 	end

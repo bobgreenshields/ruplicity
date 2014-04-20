@@ -1,7 +1,7 @@
-require_relative './parse_action'
+require_relative './cmd_builder'
 
 module Ruplicity
-	class ParseActionWithDir < ParseAction
+	class BuildActionWithDir < CmdBuilder
 		def action_list
 			%w(full incr verify restore)
 		end
