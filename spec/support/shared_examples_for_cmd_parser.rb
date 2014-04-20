@@ -5,7 +5,7 @@ shared_examples "a cmd_parser" do
 
 	it_behaves_like "it can set_errors"
 
-#	describe "#parse" do
-#		specify { parser.should respond_to(:parse) }
-#	end
+	describe "#cmd_arr" do
+		specify { parser.should respond_to(:cmd_arr) }
+	end
 end
