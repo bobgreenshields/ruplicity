@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '../../../lib/ruplicity/cmdlineparser/normalize_args'
+require_relative '../../../lib/ruplicity/cmdlinebuilder/normalize_args'
 
 	def norm
 		NormalizeArgs.new(args)

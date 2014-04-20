@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '../../../lib/ruplicity/cmdlineparser/parse_run_as_sudo'
+require_relative '../../../lib/ruplicity/cmdlinebuilder/parse_run_as_sudo'
 
 describe ParseRunAsSudo do
 #	it_behaves_like "a parser"

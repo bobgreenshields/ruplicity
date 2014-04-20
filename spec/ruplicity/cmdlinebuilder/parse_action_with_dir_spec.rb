@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '../../../lib/ruplicity/cmdlineparser/parse_action_with_dir'
+require_relative '../../../lib/ruplicity/cmdlinebuilder/parse_action_with_dir'
 
 describe ParseActionWithDir do
 	it_behaves_like "an action parser"
