@@ -1,4 +1,4 @@
-require_relative './shared_examples_for_parsers'
+#require_relative './shared_examples_for_parsers'
 
 shared_examples "an action parser" do
 #	let(:parser) { described_class.new(@shared_parser_args) }

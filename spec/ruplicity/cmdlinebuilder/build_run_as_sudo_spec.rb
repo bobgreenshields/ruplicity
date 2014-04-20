@@ -2,7 +2,7 @@ require 'spec_helper'
 require_relative '../../../lib/ruplicity/cmdlinebuilder/build_run_as_sudo'
 
 describe BuildRunAsSudo do
-	it_behaves_like "a cmd_parser"
+	it_behaves_like "a cmd_builder"
 
 	def builder
 		BuildRunAsSudo.new(args)
