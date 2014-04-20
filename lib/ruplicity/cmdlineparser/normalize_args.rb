@@ -3,7 +3,7 @@ require_relative '../set_errors'
 module Ruplicity
 
 	class NormalizeArgs
-#		include SetErrors
+		include SetErrors
 
 		def initialize(args)
 			@args = args
@@ -21,7 +21,11 @@ module Ruplicity
 		private
 
 		def safe_normalize_key(new_args, old_key)
-			normalize_key(old_key)
+			res = normalize_key(old_key)
+			if new_args.has_key?(res)
+				post_error("#{old_key} when normalized was a duplicate key")
+			end
+			res
 		end
 
 		def normalize_key(old_key)
