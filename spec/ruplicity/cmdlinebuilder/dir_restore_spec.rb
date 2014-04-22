@@ -1,33 +1,33 @@
 require 'spec_helper'
-require_relative '../../../lib/ruplicity/cmdlinebuilder/dir_backup'
+require_relative '../../../lib/ruplicity/cmdlinebuilder/dir_restore'
 
-describe DirBackup do
+describe DirRestore do
 	it_behaves_like "a cmd_builder"
 
 	def builder
-		DirBackup.new(@args)
+		DirRestore.new(@args)
 	end
 
 	before :each do
 		@start_array = ["duplicity"]
 		@options = "--dry-run --encrypt-key BBBBBBBB"
-		@args =  {name: "test", action: "full", dir: "test_dir", url: "test_url", options: @options}
+		@args =  {name: "test", action: "restore", dir: "test_dir", url: "test_url", options: @options}
 	end
 
 	def correct_cmd_arr
-		@start_array + [ @args[:action], @options, @args[:dir], @args[:url] ]
+		@start_array + [ @args[:action], @options, @args[:url], @args[:dir] ]
 	end
 
 	describe "#cmd_arr" do
-		context "when args contain action full" do
+		context "when args contain action restore" do
 			it "should append the action, options, dir and url" do
 				builder.cmd_arr(["duplicity"]).should eql(correct_cmd_arr)
 			end
 		end
 
-		context "when args contain action incr" do
+		context "when args contain action verify" do
 			before :each do
-				@args[:action] = 'incr'
+				@args[:action] = 'verify'
 			end
 			it "should append the action, options, dir and url" do
 				builder.cmd_arr(["duplicity"]).should eql(correct_cmd_arr)
