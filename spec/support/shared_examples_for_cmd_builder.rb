@@ -8,4 +8,5 @@ shared_examples "a cmd_builder" do
 	describe "#cmd_arr" do
 		specify { builder.should respond_to(:cmd_arr) }
 	end
+
 end

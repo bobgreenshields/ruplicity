@@ -2,6 +2,9 @@ require_relative '../set_errors'
 
 module Ruplicity
 
+	class SubClassRespError < StandardError
+	end
+
 	class CmdBuilder
 		include SetErrors
 
@@ -18,18 +21,18 @@ module Ruplicity
 			end
     end
 
-		private
-
 		def uses_this_parser?
-			raise "#uses_this_parser? SubclassResponsibility"
+			raise SubClassRespError "#uses_this_parser? SubclassResponsibility"
 		end
 
+		private
+
 		def check_for_errors
-			raise "#check_for_errors SubclassResponsibility"
+			raise SubClassRespError "#check_for_errors SubclassResponsibility"
 		end
 
 		def amend_cmd_array(arr)
-			raise "#amend_cmd_array SubclassResponsibility"
+			raise SubClassRespError "#amend_cmd_array SubclassResponsibility"
 		end
 	end
 
