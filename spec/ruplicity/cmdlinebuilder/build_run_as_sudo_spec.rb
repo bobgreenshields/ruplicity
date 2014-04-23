@@ -8,6 +8,21 @@ describe BuildRunAsSudo do
 		BuildRunAsSudo.new(args)
 	end
 
+	describe "#self.use_this?" do
+		context "with a key of :run_as_sudo" do
+			let(:args) { {run_as_sudo: "true", target: "target/path", source: "source/path"} }
+			it "should be true" do
+				expect(BuildRunAsSudo.use_this?(args)).to be_true
+			end
+		end
+		context "without a key of :run_as_sudo" do
+			let(:args) { {target: "target/path", source: "source/path"} }
+			it "should be true" do
+				expect(BuildRunAsSudo.use_this?(args)).to be_false
+			end
+		end
+	end
+
 	describe "#cmd_arr" do
 		let(:start_arr) { ["duplicity"]  }
 		let(:prep_arr) { ["sudo"] + start_arr }

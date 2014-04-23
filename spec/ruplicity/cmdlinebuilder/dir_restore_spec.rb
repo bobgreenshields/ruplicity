@@ -18,6 +18,30 @@ describe DirRestore do
 		@start_array + [ @args[:action], @options, @args[:url], @args[:dir] ]
 	end
 
+	describe "#self.use_this?" do
+		context "with an action of restore" do
+			it "should be true" do
+				expect(DirRestore.use_this?(@args)).to be_true
+			end
+		end
+		context "with an action of verify" do
+			before :each do
+				@args[:action] = 'verify'
+			end
+			it "should be true" do
+				expect(DirRestore.use_this?(@args)).to be_true
+			end
+		end
+		context "with any other action value" do
+			before :each do
+				@args[:action] = 'full'
+			end
+			it "should be true" do
+				expect(DirRestore.use_this?(@args)).to be_false
+			end
+		end
+	end
+
 	describe "#cmd_arr" do
 		context "when args contain action restore" do
 			it "should append the action, options, dir and url" do

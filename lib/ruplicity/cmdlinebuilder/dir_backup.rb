@@ -5,8 +5,14 @@ module Ruplicity
 
 	class DirBackup < CmdBuilder
 
+		def self.use_this?(args)
+			%w(full incr).include?(args[:action])
+		end
+
+
 		def uses_this_parser?
-			%w(full incr).include?(@args[:action])
+			self.class.use_this?(@args)
+#			%w(full incr).include?(@args[:action])
 		end
 
 		private

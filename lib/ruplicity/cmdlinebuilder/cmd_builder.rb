@@ -8,6 +8,10 @@ module Ruplicity
 	class CmdBuilder
 		include SetErrors
 
+		def self.use_this?(args)
+			raise SubClassRespError, "#use_this? SubclassResponsibility"
+		end
+
 		def initialize(args)
 			@args = args
 		end
@@ -22,17 +26,17 @@ module Ruplicity
     end
 
 		def uses_this_parser?
-			raise SubClassRespError "#uses_this_parser? SubclassResponsibility"
+			raise SubClassRespError, "#uses_this_parser? SubclassResponsibility"
 		end
 
 		private
 
 		def check_for_errors
-			raise SubClassRespError "#check_for_errors SubclassResponsibility"
+			raise SubClassRespError, "#check_for_errors SubclassResponsibility"
 		end
 
 		def amend_cmd_array(arr)
-			raise SubClassRespError "#amend_cmd_array SubclassResponsibility"
+			raise SubClassRespError, "#amend_cmd_array SubclassResponsibility"
 		end
 	end
 

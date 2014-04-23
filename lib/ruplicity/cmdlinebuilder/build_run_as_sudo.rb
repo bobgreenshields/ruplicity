@@ -5,10 +5,15 @@ module Ruplicity
 
 	class BuildRunAsSudo < CmdBuilder
 
+		def self.use_this?(args)
+			args.has_key?(:run_as_sudo)
+		end
+
 		private
 
 		def uses_this_parser?
-			@args.has_key? :run_as_sudo
+			self.class.use_this?(@args)
+#			@args.has_key? :run_as_sudo
 		end
 
 		def check_for_errors

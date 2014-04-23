@@ -5,8 +5,12 @@ module Ruplicity
 
 	class DirRestore < CmdBuilder
 
+		def self.use_this?(args)
+			%w(restore verify).include?(args[:action])
+		end
+
 		def uses_this_parser?
-			%w(restore verify).include?(@args[:action])
+			self.class.use_this?(@args)
 		end
 
 		private
