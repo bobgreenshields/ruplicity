@@ -17,7 +17,8 @@ module Ruplicity
 		end
 
     def cmd_arr(arr)
-    	if uses_this_parser?
+#    	if uses_this_parser?
+    	if self.class.use_this?(@args)
     		check_for_errors
     		has_no_errors? ? amend_cmd_array(arr) : arr
     	else
