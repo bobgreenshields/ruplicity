@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.join(File.dirname(FILE), '..', 'lib')
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 #require 'ruplicity'
 #require 'testlogger'
 
