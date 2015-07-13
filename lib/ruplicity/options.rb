@@ -40,6 +40,14 @@ module Ruplicity
 				@options[index_arr.last] = option
 			end
 		end
+
+		def inject_matching_options(keys, arg_hash)
+			keys.each do | key |
+				if arg_hash.has_key?(key) && block_given?
+					add(yield key)
+				end
+			end
+		end
 		
 	end
 	

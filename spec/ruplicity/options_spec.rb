@@ -77,10 +77,41 @@ describe Options do
 				expect(@opt.options[2]).to eq("--exclude another")
 			end
 
-			it "should change the indices of a duplicate option" do
+			it "should not change the indices of a duplicate option" do
 				@opt.add("--exclude another")
 				expect(@opt.key_indices(:exclude)).to eq([1,2])
 			end
+    end
+
+    describe "#inject_matching_options" do
+    	before(:example) do
+				@opt = Options.new(["--force", "--exclude this", "--exclude that"])
+				@args = {dry_run: nil, exclude: "another", test: nil}
+    	end
+
+    	it "should ignore items in the hash whose keys are not present" do
+    		keys = [:not_present]
+				@opt.inject_matching_options(keys, @args) { | key | "--#{key}" }	
+				expect(@opt.options).to eq(["--force", "--exclude this", "--exclude that"])
+    	end
+
+			it "should add an option when it's key is present" do
+    		keys = [:dry_run]
+				@opt.inject_matching_options(keys, @args) { | key | "--#{key}".gsub("_","-") }	
+				expect(@opt.options).to eq(["--force", "--exclude this", "--exclude that", "--dry-run"])
+    	end
+
+			it "should add and update the index for an option when its key is present" do
+    		keys = [:dry_run]
+				@opt.inject_matching_options(keys, @args) { | key | "--#{key}".gsub("_","-") }	
+				expect(@opt.key_indices(:dry_run)).to eq([3])
+    	end
+
+			it "should overwrite existing options when its key is present" do
+    		keys = [:exclude]
+				@opt.inject_matching_options(keys, @args) { | key | "--#{key} #{@args[key]}" }	
+				expect(@opt.options).to eq(["--force", "--exclude this", "--exclude another"])
+    	end
     end
 
 	end
