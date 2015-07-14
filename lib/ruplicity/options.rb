@@ -31,6 +31,12 @@ module Ruplicity
 			end
 		end
 
+		def option_from_key(key)
+			option = "--#{key}".downcase.tr("_", "-")
+			option << " " << yield if block_given?
+			option
+		end
+
 		def add(option)
 			index_arr = @key_lookup[key_from_option(option)]
 			if index_arr.empty?

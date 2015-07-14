@@ -114,5 +114,31 @@ describe Options do
 			expect(@opt.options).to eq(["--force", "--exclude this", "--exclude another"])
 		end
 	end
+
+	describe "#option_from_key" do
+		let(:opt) { Options.new([]) }
+
+		it "should return a string" do
+			expect(opt.option_from_key("--dry-run")).to be_a(String)
+		end
+
+		it "add dashes to the start of the key" do
+			expect(opt.option_from_key(:force)).to eq("--force")
+		end
+
+		it "swaps underscores for dashes between words" do
+			expect(opt.option_from_key(:dry_run)).to eq("--dry-run")
+		end
+
+		it "downcases the string" do
+			expect(opt.option_from_key(:FoRce)).to eq("--force")
+		end
+
+		it "adds a space and the value of a block if given" do
+			arg_hash = {sign_key: "A12345BCF"}
+			key = :sign_key
+			expect(opt.option_from_key(key) { arg_hash[key] } ).to eq("--sign-key A12345BCF")
+		end
+	end
 	
 end
