@@ -23,9 +23,9 @@ module Ruplicity
 		end
 
 		def key_from_option(option)
-			match = /--(\S+)(\s+\S+)*$/.match option
+			match = /--(?<key>\S+)(?:\s+\S+)*$/.match option
 			if match
-				match[1].downcase.gsub("-", "_").to_sym
+				match[:key].downcase.tr("-", "_").to_sym
 			else
 				raise ArgumentError, "option #{option} does not have a good format"
 			end
