@@ -1,4 +1,4 @@
-Module Ruplicity
+module Ruplicity
 	class CmdItem
 		def initialize(args)
 			@args = args
