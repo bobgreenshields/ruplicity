@@ -11,6 +11,8 @@ module Ruplicity
 			end
 		end
 
+		attr_reader :cmd_items
+
 		def initialize
 			@cmd_items = self.class.cmd_items_to_build.map &:call
 		end
