@@ -12,7 +12,7 @@ module Ruplicity
 		end
 
 		def initialize
-			@cmd_items = self.class.cmd_items_to_build.map &:build
+			@cmd_items = self.class.cmd_items_to_build.map &:call
 		end
 	end
 
@@ -22,7 +22,7 @@ module Ruplicity
 			@name = name
 		end
 
-		def build
+		def call
 			@cmd_item_class.initialize(@name)
 		end
 	end
