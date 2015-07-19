@@ -25,7 +25,9 @@ module Ruplicity
 		end
 
 		def call
-			@cmd_item_class.initialize(@name)
+			cmd_item = @cmd_item_class.new
+			cmd_item.name = @name
+			cmd_item
 		end
 	end
 end

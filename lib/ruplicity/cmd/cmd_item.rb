@@ -1,7 +1,9 @@
 module Ruplicity
 	class CmdItem
-		def initialize(args)
-			@args = args
+		attr_accessor :name
+
+		def initialize
+			@name = ""
 		end
 	end
 
