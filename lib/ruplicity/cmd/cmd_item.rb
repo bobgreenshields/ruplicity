@@ -5,6 +5,10 @@ module Ruplicity
 		def initialize
 			@name = ""
 		end
+
+		def symbol_to_find
+			@name.gsub("-", "_").to_sym
+		end
 	end
 
 end
