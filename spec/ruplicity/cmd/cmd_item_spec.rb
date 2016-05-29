@@ -15,6 +15,33 @@ module Ruplicity
 					expect(item.symbol_to_find).to eql(:extra_clean)
 				end
 			end
+
+			describe "#errors" do
+				context "when initialized with default" do
+					it "is an array" do
+						expect(item.errors).to be_a Array
+					end
+					it "is empty" do
+						expect(item.errors).to be_empty
+					end
+				end
+
+				context "when an error has been added" do
+					before :each do
+						item.add_error("this error")
+					end
+
+					it "has an element" do
+						expect(item.errors.length).to eql(1)
+					end
+
+					it "includes the error string" do
+						expect(item.errors.last).to eq("this error")
+					end
+				end
+			end
+
+			
 		end
 	end
 	

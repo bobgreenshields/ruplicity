@@ -1,6 +1,7 @@
 module Ruplicity
 	class CmdItem
-		attr_accessor :name, :errors
+		attr_accessor :name
+		attr_reader :errors
 
 		def initialize(errors: [])
 			@name = ""
@@ -17,7 +18,6 @@ module Ruplicity
 		def key_not_found
 			nil
 		end
-
 	
 		def call(params)
 			if params.key? symbol_to_find
@@ -25,6 +25,10 @@ module Ruplicity
 			else
 				key_not_found
 			end
+		end
+
+		def add_error(error_string)
+			@errors << error_string
 		end
 	end
 
