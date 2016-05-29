@@ -11,6 +11,11 @@ module Ruplicity
 				"--#{@name}"
 			end
 
+			def key_found(value)
+				switch_str
+			end
+
+
 		end
 	end
 end

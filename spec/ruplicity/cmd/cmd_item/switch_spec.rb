@@ -22,9 +22,21 @@ module Ruplicity
 				context "when params contain switch symbol" do
 					let (:params) { { this: "name", extra_clean: "" } }
 
-
-
+					it "returns a double hyphen switch" do
+						expect(item.call(params)).to eq("--extra-clean")
+					end
 				end
+
+				context "when params do not contain switch symbol" do
+				let(:params) { { this: "name", that: "stuff" } }
+
+				it "returns nil" do
+					expect(item.call(params)).to be_nil
+				end
+			end
+
+
+
 
 			end
 
