@@ -1,13 +1,13 @@
 require 'support/shared_examples_for_cmd_item.rb'
-require_relative '../../../../lib/ruplicity/cmd/cmd_item/optional'
+require_relative '../../../../lib/ruplicity/cmd/cmd_item/named_value'
 
 module Ruplicity
-	describe CmdItem::Optional do
+	describe CmdItem::NamedValue do
 		it_behaves_like "a CmdItem"
 
 		context "given a name" do
 		let (:item) do
-			item = CmdItem::Optional.new
+			item = CmdItem::NamedValue.new
 			item.name = "extra-clean"
 			item
 		end
