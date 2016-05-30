@@ -1,13 +1,13 @@
 require 'support/shared_examples_for_cmd_item.rb'
-require_relative '../../../../lib/ruplicity/cmd/cmd_item/required_option'
+require_relative '../../../../lib/ruplicity/cmd/cmd_item/required'
 
 module Ruplicity
-	describe CmdItem::RequiredOption do
+	describe CmdItem::Required do
 		it_behaves_like "a CmdItem"
 
 		context "given a name" do
 		let (:item) do
-			item = CmdItem::RequiredOption.new
+			item = CmdItem::Required.new
 			item.name = "extra-clean"
 			item
 		end
@@ -36,7 +36,7 @@ module Ruplicity
 
 				it "adds an error" do
 					item.call params
-					expect(item.errors.last).to eq("CmdItem::RequiredOption expected to find a params hash key of :extra_clean but was not found")
+					expect(item.errors.last).to eq("Ruplicity::CmdItem::Required expected to find a params hash key of :extra_clean but was not found")
 				end
 			end
 
