@@ -5,6 +5,7 @@ module Ruplicity
 		class OptionalValue < CmdItem
 
 			def key_found(value)
+				value
 			end
 
 
