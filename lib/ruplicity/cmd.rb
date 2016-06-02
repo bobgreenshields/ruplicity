@@ -11,10 +11,15 @@ module Ruplicity
 			end
 		end
 
-		attr_reader :cmd_items
+		attr_reader :cmd_items, :errors
 
-		def initialize
-			@cmd_items = self.class.cmd_items_to_build.map &:call
+		def initialize(errors: [])
+			@errors = errors
+			build_cmd_items
+		end
+
+		def build_cmd_items
+			@cmd_items = self.class.cmd_items_to_build.map { |item| item.call(@errors) }
 		end
 	end
 
@@ -24,8 +29,8 @@ module Ruplicity
 			@name = name
 		end
 
-		def call
-			cmd_item = @cmd_item_class.new
+		def call(errors)
+			cmd_item = @cmd_item_class.new(errors: errors)
 			cmd_item.name = @name
 			cmd_item
 		end
