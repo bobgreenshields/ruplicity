@@ -7,7 +7,7 @@ describe OptionArray do
 
 	def populated_array
 			opt_array = OptionArray.new
-			opts = %i{one two three}.map {|name| TestOpt.new(name)}
+			opts = %i{one two exclude}.map {|name| TestOpt.new(name)}
 			opts.each {|opt| opt_array.push(opt)}
 			opt_array
 	end
@@ -94,34 +94,53 @@ describe OptionArray do
 		
 	end
 
-	describe "#replace_or_push" do
+	describe "#add" do
+		context "when an option is on the prepend list" do
+			let(:test_opt) {TestOpt.new(:exclude)}
+			it "should be added to the start of the array" do
+				opt_array = populated_array
+				opt_array.add test_opt
+				expect(opt_array[0]).to equal(test_opt)
+			end
+
+			it "should return itself" do
+				opt_array = populated_array
+				expect(opt_array.add(test_opt)).to equal(opt_array)
+			end
+		end
+
 		context "when it does not inlcude an option with the same name" do
 			let(:test_opt) {TestOpt.new(:four)}
 			it "should return itself" do
 				opt_array = populated_array
-				expect(opt_array.replace_or_push(test_opt)).to equal(opt_array)
+				expect(opt_array.add(test_opt)).to equal(opt_array)
 			end
 
 			it "should push the option onto the array" do
 				opt_array = populated_array
-				opt_array.replace_or_push(test_opt)
-#				expect(opt_array.length).to eql(4)
+				opt_array.add(test_opt)
 				expect(opt_array[3]).to equal(test_opt)
 			end
 			
 		end
 
 		context "when it inlcudes an option with the same name" do
-			let(:test_opt) {TestOpt.new(:one)}
+			let(:test_opt) {TestOpt.new(:two)}
 			it "should return itself" do
 				opt_array = populated_array
-				expect(opt_array.replace_or_push(test_opt)).to equal(opt_array)
+				expect(opt_array.add(test_opt)).to equal(opt_array)
 			end
 
 			it "should not push the option onto the array" do
 				opt_array = populated_array
-				opt_array.replace_or_push(test_opt)
+				opt_array.add(test_opt)
 				expect(opt_array.length).to eql(3)
+			end
+
+			it "should replace the option of the same name" do
+				opt_array = populated_array
+				opt_array.add(test_opt)
+				expect(opt_array[1]).to equal(test_opt)
 			end
 			
 		end
