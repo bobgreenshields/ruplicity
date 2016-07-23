@@ -1,83 +1,56 @@
 require 'forwardable'
+require_relative "./option_adder"
 
 class OptionArray
 	extend Forwardable
 
-	PREPEND_OPTIONS = %i{exclude exclude_device_files exclude_filelist exclude_regexp \
-		include include_filelist include_regexp }
+	PREPENDER_NAMES = %i{exclude exclude_device_files exclude_filelist} +
+		%i{exclude_regexp include include_filelist include_regexp}
 
-	def_delegators :@option_array, :length, :[]
+	def_delegators :@option_array, :length, :[], :index
 
 	def initialize
 		@option_array = []
-		@indices = {}
-#		@indices = Hash.new {|hash, key| hash[key] = []}
+		@adders = {}
+		load_prependers
 	end
 
-	def build_prepend_lookup
-		result = Hash.new (false)
-		PREPEND_OPTIONS.each_with_object(result) {|name, hash| hash[name] = true}
+	def initialize_options(options)
+		options.each {|option| @option_array << option}
+		load_adders(options.map(&:name), replacer)
+		load_prependers
 	end
-
-	def prepend_lookup
-		@prepend_lookup ||= build_prepend_lookup
-	end
-
-	def prepend?(option)
-		prepend_lookup[option.name]
-	end
-
-	def include?(option)
-		@indices.key? option.name
-	end
-
-	def index(option)
-		@indices.fetch(option.name, nil)
-	end
-
-	def add_index(option, index)
-		@indices[option.name] = index unless include?(option)
-	end
-
-	def push_index(option)
-		@indices[option.name] = (length - 1) unless include?(option)
-	end
-
-	def increment_indices
-		updated_hash = {}
-		@indices.each {|key, value| updated_hash[key] = value + 1}
-		@indices = updated_hash
-	end
-
-	def push(option)
-		@option_array.push option
-		push_index(option)
-		self
-	end
-
-	def prepend_index(option)
-		increment_indices
-		@indices[option.name] = 0
-	end
-
-	def prepend(option)
-		@option_array.unshift(option)
-		prepend_index(option)
-		self
-	end
-
-	def replace(option)
-		@option_array[index(option)] = option
-		self
-	end
-
+	
 	def add(option)
-		return prepend(option) if prepend?(option)
-		if include?(option)
-			replace option
+		if @adders.key?(option.name)
+			@adders[option.name].call(@option_array, option)
 		else
-			push option
+			appender.call(@option_array, option)
+			@adders[option.name] = replacer
 		end
 		self
 	end
+
+	private
+
+	def load_prependers
+		load_adders(PREPENDER_NAMES, prepender)
+	end
+
+	def load_adders(names, adder)
+		names.each {|name| @adders[name] = adder}
+	end
+
+	def replacer
+		@replacer ||= OptionAdder::Replacer.new
+	end
+
+	def appender
+		@appender ||= OptionAdder::Appender.new
+	end
+
+	def prepender
+		@prepender ||= OptionAdder::Prepender.new
+	end
+
 end

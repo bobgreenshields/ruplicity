@@ -1,7 +1,13 @@
 class Option
-	class String
-		attr_reader :name
+	attr_reader :name
 
+	def ==(other_option)
+		name == other_option.name
+	end
+end
+
+class Option
+	class String < Option
 		NAME_REGEXP = /^\s*-*(?<name>\S+)\s*.*$/
 
 		def initialize(option_string)
@@ -19,9 +25,7 @@ class Option
 		end
 	end
 
-	class Valueless
-		attr_reader :name
-
+	class Valueless < Option
 		def initialize(key)
 			@name = normalize_name(key)
 		end

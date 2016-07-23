@@ -20,6 +20,18 @@ describe Option::String do
 		end
 	end
 
+	describe "#==" do
+		it "returns true if the names are the same" do
+			similar_option = Option::String.new("--this other values")
+			expect(option == similar_option).to be_truthy
+		end
+
+		it "returns false if the names are different" do
+			different_option = Option::String.new("--that value info")
+			expect(option == different_option).to be_falsey
+		end
+	end
+
 	describe "#to_s" do
 		it "returns the string used to create the option" do
 				expect(option.to_s).to eql("--this value info")
@@ -53,6 +65,18 @@ describe Option::Valueless do
 					expect(option.name).to eql(:this_that)
 				end
 			end
+
+		describe "#==" do
+			it "returns true if the names are the same" do
+				similar_option = Option::String.new(:this_that)
+				expect(option == similar_option).to be_truthy
+			end
+
+			it "returns false if the names are different" do
+				different_option = Option::String.new(:that_that)
+				expect(option == different_option).to be_falsey
+			end
+		end
 
 		describe "#to_s" do
 			it "replaces the underscore with a dash" do
