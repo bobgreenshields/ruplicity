@@ -5,7 +5,7 @@ class OptionArray
 	extend Forwardable
 
 	PREPENDER_NAMES = %i{exclude exclude_device_files exclude_filelist} +
-		%i{exclude_regexp include include_filelist include_regexp}
+		%i{exclude_regexp include include_filelist include_regexp rename}
 
 	def_delegators :@option_array, :length, :[], :index
 

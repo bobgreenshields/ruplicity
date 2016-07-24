@@ -26,7 +26,8 @@ describe OptionArray do
 	 	exclude: "/TMP",
 	 	progress_rate: "3",
 	 	full_if_older_than: "3M",
-	 	include: "this-important-file"}
+	 	include: "this-important-file",
+	 	rename: "this-file that-file"}
 	end
 
 	def valueless_options
@@ -37,6 +38,7 @@ describe OptionArray do
 
 	def target
 		[
+	 	"--rename this-file that-file",
 	 	"--include this-important-file",
 		"--exclude /TMP",
 		"--exclude /tmp",
