@@ -31,6 +31,10 @@ class OptionArray
 		self
 	end
 
+	def to_string_array
+		@option_array.map(&:to_s)
+	end
+
 	private
 
 	def load_prependers
