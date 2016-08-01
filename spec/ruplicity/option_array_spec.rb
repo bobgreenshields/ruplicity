@@ -1,5 +1,6 @@
-require 'spec_helper'
-require_relative '../../lib/ruplicity/option_array.rb'
+#require 'spec_helper'
+#require_relative '../../lib/ruplicity/option_array.rb'
+require 'ruplicity/option_array'
 
 TestOpt = Struct.new(:name)
 
