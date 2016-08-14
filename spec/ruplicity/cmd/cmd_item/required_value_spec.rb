@@ -1,7 +1,7 @@
-require 'support/shared_examples_for_cmd_item.rb'
-require_relative '../../../../lib/ruplicity/cmd/cmd_item/required_value'
+#require 'support/shared_examples_for_cmd_item.rb'
+#require_relative '../../../../lib/ruplicity/cmd/cmd_item/required_value'
+require 'ruplicity/cmd/cmd_item/required_value'
 
-module Ruplicity
 	describe CmdItem::RequiredValue do
 		it_behaves_like "a CmdItem"
 
@@ -35,9 +35,5 @@ module Ruplicity
 					end
 				end
 			end
-
-
-
     end
 	end
-end

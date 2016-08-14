@@ -1,4 +1,5 @@
 module Ruplicity
+
 	class Cmd
 
 		class << self
@@ -35,4 +36,5 @@ module Ruplicity
 			cmd_item
 		end
 	end
+
 end

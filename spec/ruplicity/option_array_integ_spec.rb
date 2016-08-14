@@ -1,6 +1,8 @@
-require 'spec_helper'
-require_relative '../../lib/ruplicity/option_array.rb'
-require_relative '../../lib/ruplicity/option.rb'
+#require 'spec_helper'
+require "ruplicity/option_array"
+require "ruplicity/option"
+#require_relative '../../lib/ruplicity/option_array.rb'
+#require_relative '../../lib/ruplicity/option.rb'
 
 describe OptionArray do
 

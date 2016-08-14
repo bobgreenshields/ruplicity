@@ -1,60 +1,64 @@
 require 'forwardable'
-require_relative "./option_adder"
+require "ruplicity/option_array/option_adder"
+#require_relative "./option_adder"
 
-class OptionArray
-	extend Forwardable
+module Ruplicity
 
-	PREPENDER_NAMES = %i{exclude exclude_device_files exclude_filelist} +
-		%i{exclude_regexp include include_filelist include_regexp rename}
+	class OptionArray
+		extend Forwardable
 
-	def_delegators :@option_array, :length, :[], :index
+		PREPENDER_NAMES = %i{exclude exclude_device_files exclude_filelist} +
+			%i{exclude_regexp include include_filelist include_regexp rename}
 
-	def initialize
-		@option_array = []
-		@adders = {}
-		load_prependers
-	end
+		def_delegators :@option_array, :length, :[], :index
 
-	def initialize_options(options)
-		options.each {|option| @option_array << option}
-		load_adders(options.map(&:name), replacer)
-		load_prependers
-	end
-	
-	def add(option)
-		if @adders.key?(option.name)
-			@adders[option.name].call(@option_array, option)
-		else
-			appender.call(@option_array, option)
-			@adders[option.name] = replacer
+		def initialize
+			@option_array = []
+			@adders = {}
+			load_prependers
 		end
-		self
-	end
 
-	def to_string_array
-		@option_array.map(&:to_s)
-	end
+		def initialize_options(options)
+			options.each {|option| @option_array << option}
+			load_adders(options.map(&:name), replacer)
+			load_prependers
+		end
+		
+		def add(option)
+			if @adders.key?(option.name)
+				@adders[option.name].call(@option_array, option)
+			else
+				appender.call(@option_array, option)
+				@adders[option.name] = replacer
+			end
+			self
+		end
 
-	private
+		def to_string_array
+			@option_array.map(&:to_s)
+		end
 
-	def load_prependers
-		load_adders(PREPENDER_NAMES, prepender)
-	end
+		private
 
-	def load_adders(names, adder)
-		names.each {|name| @adders[name] = adder}
-	end
+		def load_prependers
+			load_adders(PREPENDER_NAMES, prepender)
+		end
 
-	def replacer
-		@replacer ||= OptionAdder::Replacer.new
-	end
+		def load_adders(names, adder)
+			names.each {|name| @adders[name] = adder}
+		end
 
-	def appender
-		@appender ||= OptionAdder::Appender.new
-	end
+		def replacer
+			@replacer ||= OptionAdder::Replacer.new
+		end
 
-	def prepender
-		@prepender ||= OptionAdder::Prepender.new
+		def appender
+			@appender ||= OptionAdder::Appender.new
+		end
+
+		def prepender
+			@prepender ||= OptionAdder::Prepender.new
+		end
 	end
 
 end

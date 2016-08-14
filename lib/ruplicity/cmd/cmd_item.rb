@@ -1,4 +1,5 @@
 module Ruplicity
+
 	class CmdItem
 		attr_accessor :name
 		attr_reader :errors

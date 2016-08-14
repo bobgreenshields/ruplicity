@@ -1,4 +1,5 @@
-require_relative '../cmd_item/switch.rb'
+#require_relative '../cmd_item/switch.rb'
+require "ruplicity/cmd/cmd_item/switch"
 
 module Ruplicity
 	class CmdItem

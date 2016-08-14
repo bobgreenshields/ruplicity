@@ -1,6 +1,8 @@
-require_relative './optional_value'
+#require_relative './optional_value'
+require 'ruplicity/cmd/cmd_item/optional_value'
 
 module Ruplicity
+
 	class CmdItem
 		class RequiredValue < OptionalValue 
 
@@ -13,7 +15,7 @@ module Ruplicity
 									"key of :#{symbol_to_find} but was not found"
 				nil
 			end
-
 		end
 	end
+
 end

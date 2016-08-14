@@ -1,5 +1,6 @@
-require 'spec_helper'
-require_relative '../../lib/ruplicity/cmd'
+#require 'spec_helper'
+require "ruplicity/cmd"
+#require_relative '../../lib/ruplicity/cmd'
 
 class ItemTester
 	attr_reader :errors, :name

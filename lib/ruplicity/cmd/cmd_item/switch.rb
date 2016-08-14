@@ -1,6 +1,7 @@
 require_relative '../cmd_item'
 
 module Ruplicity
+
 	class CmdItem
 		class Switch < CmdItem
 
@@ -11,8 +12,7 @@ module Ruplicity
 			def key_found(value)
 				switch_str
 			end
-
-
 		end
 	end
+
 end
