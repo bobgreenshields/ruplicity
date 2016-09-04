@@ -49,7 +49,39 @@ describe Cmd do
 			expect(c1.new.cmd_items.first.name).to eq("first")
 			expect(c2.new.cmd_items.first.name).to eq("different")
 		end
-		
+	end
+
+	describe ".action_name" do
+		context "when a subclass has not defined the action name" do
+			class Cmd
+				class Full < Cmd
+				end
+			end
+				it "returns the subclass name downcased" do
+					expect(Cmd::Full.action_name).to eql("full")
+				end
+		end		
+
+		context "when a subclass has called action to define the name" do
+			class Cmd
+				class FullIfOlder < Cmd
+					action "full-if-older-than"
+				end
+			end
+
+			it "returns the value that action was called with" do
+				expect(Cmd::FullIfOlder.action_name).to eql("full-if-older-than")
+			end
+		end
+
+		context "when a subclass is not in the Cmd class namespace" do
+			class Incremental < Cmd
+			end
+
+			it "raises a standard error" do
+				expect{ Incremental.action_name }.to raise_error(StandardError)
+			end
+		end
 	end
 
 end

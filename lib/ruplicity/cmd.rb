@@ -1,6 +1,10 @@
 module Ruplicity
 
+	CLASS_REGEXP = /Cmd::(?<subclass>\S+)/
+
 	class Cmd
+
+		@action = nil
 
 		class << self
 			def cmd_items_to_build
@@ -9,6 +13,20 @@ module Ruplicity
 			
 			def add_cmd_item_to_build(cmd_item_class, name)
 				cmd_items_to_build << CmdItemBuilder.new(cmditemclass, name)
+			end
+
+			def action(value)
+				@action = value
+			end
+
+			def default_action_name
+				match = CLASS_REGEXP.match(self.name)
+				raise StandardError, "All Cmd subclasses must be in the Cmd class namespace" unless match
+				match[:subclass].downcase
+			end
+
+			def action_name
+				@action || default_action_name
 			end
 		end
 
