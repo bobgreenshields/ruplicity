@@ -1,3 +1,8 @@
+#requires all the cmd_item classes
+#Dir[File.dirname(__FILE__) + '/cmd_item/*.rb'].each {|file| require file }
+
+require "ruplicity/cmd/cmd_item/required_value"
+
 module Ruplicity
 
 	CLASS_REGEXP = /Cmd::(?<subclass>\S+)/
@@ -28,6 +33,16 @@ module Ruplicity
 			def action_name
 				@action || default_action_name
 			end
+
+			def url
+				cmd_items_to_build << CmdItemBuilder.new(CmdItem::RequiredValue, "url")
+				#add_cmd_item_to_build(CmdItem::RequiredValue, :url)
+			end
+
+			def folder
+				cmd_items_to_build << CmdItemBuilder.new(CmdItem::RequiredValue, "folder")
+				#add_cmd_item_to_build(CmdItem::RequiredValue, :folder)
+			end
 		end
 
 		attr_reader :cmd_items, :errors
@@ -39,6 +54,14 @@ module Ruplicity
 
 		def build_cmd_items
 			@cmd_items = self.class.cmd_items_to_build.map { |item| item.call(@errors) }
+		end
+
+		def call(params)
+			result = []
+			result << "duplicity"
+			result << self.class.action_name
+			@cmd_items.each_with_object(result) { |item, res| res << item.call(params) }
+			result.compact
 		end
 	end
 
