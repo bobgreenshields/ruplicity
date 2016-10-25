@@ -1,5 +1,5 @@
 require 'forwardable'
-require "ruplicity/option_array/option_adder"
+require "ruplicity/cmd/cmd_item/options/option_array/option_adder"
 #require_relative "./option_adder"
 
 module Ruplicity

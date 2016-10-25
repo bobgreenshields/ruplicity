@@ -1,6 +1,6 @@
 require 'spec_helper'
 #require_relative '../../lib/ruplicity/option.rb'
-require 'ruplicity/option'
+require 'ruplicity/cmd/cmd_item/options/option'
 
 describe Option::String do
 	let(:option) {Option::String.new("--this value info")}

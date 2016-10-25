@@ -1,6 +1,6 @@
 #require 'spec_helper'
-require "ruplicity/option_array"
-require "ruplicity/option"
+require "ruplicity/cmd/cmd_item/options/option_array"
+require "ruplicity/cmd/cmd_item/options/option"
 #require_relative '../../lib/ruplicity/option_array.rb'
 #require_relative '../../lib/ruplicity/option.rb'
 
