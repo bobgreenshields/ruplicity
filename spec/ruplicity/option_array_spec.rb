@@ -126,7 +126,7 @@ describe OptionArray do
 			end
 		end
 
-		context "when it does not inlcude an option with the same name" do
+		context "when it does not include an option with the same name" do
 			let(:test_opt) {TestOpt.new(:four)}
 			it "should return itself" do
 				opt_array = populated_array
@@ -141,7 +141,7 @@ describe OptionArray do
 			
 		end
 
-		context "when it inlcudes an option with the same name" do
+		context "when it includes an option with the same name" do
 			let(:test_opt) {TestOpt.new(:two)}
 			it "should return itself" do
 				opt_array = populated_array
