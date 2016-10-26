@@ -32,7 +32,6 @@ describe Option::NameSplitter do
 end
 
 describe Option::LetterSplitter do
-	#subject(:splitter) { Option::LetterSplitter.new }
 	let(:allowed_switches) { %w(t v) }
 	subject(:splitter) { Option::LetterSplitter.new(allowed_switches) }
 	describe "#call" do
@@ -158,5 +157,45 @@ describe Option::OptionFromString do
 			end
 		end
 	end
+
+	describe "#to_s" do
+		context "when the name string is a normal option name with no value" do
+			let(:opt_str) { "--dry-run" }
+			subject(:opt) { Option::OptionFromString.new(opt_str) }
+
+			it "returns just the option name preceded by dashes" do
+				expect(opt.to_s).to  eql("--dry-run")
+			end
+		end
+
+		context "when the name string is a normal option name with a value" do
+			let(:opt_str) { "--encrypt-key 123ABCDE" }
+			subject(:opt) { Option::OptionFromString.new(opt_str) }
+
+			it "returns the option name followed by the value" do
+				expect(opt.to_s).to  eql("--encrypt-key 123ABCDE")
+			end
+		end
+
+		context "when the name string is a single letter switch" do
+			let(:opt_str) { "-t15D" }
+			subject(:opt) { Option::OptionFromString.new(opt_str) }
+
+			it "returns the full option name followed by the value" do
+				expect(opt.to_s).to  eql("--restore-time 15D")
+			end
+		end
+
+		context "when the name string is time" do
+			let(:opt_str) { "--time 15D" }
+			subject(:opt) { Option::OptionFromString.new(opt_str) }
+
+			it "returns the mapped option name followed by the value" do
+				expect(opt.to_s).to  eql("--restore-time 15D")
+			end
+		end
+	end
+
+
 
 end

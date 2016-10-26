@@ -9,7 +9,8 @@ module Ruplicity
 
 			def call(opt_str)
 				data = NAME_REGEXP.match(opt_str)
-				raise IncorrectlyFormattedOptionError, "an option had no text after the dash or dashes" unless data
+				raise IncorrectlyFormattedOptionError,
+					"#{opt_str}: this option has no text after the dash or dashes" unless data
 				@value = data.post_match.strip
 				res = [data[:name], @value]
 			end
@@ -25,14 +26,17 @@ module Ruplicity
 
 			def call(opt_str)
 				data = LETTER_REGEXP.match(opt_str)
-				raise IncorrectlyFormattedOptionError, "an option had no text after the dash or dashes" unless data
+				raise IncorrectlyFormattedOptionError,
+					"#{opt_str}: this option has no text after the dash or dashes" unless data
 				name = data[:name]
 				value = data.post_match.strip
 				raise IncorrectlyFormattedOptionError,
-					"#{opt_str}: a single letter switch must have a value appended to it" if value.length == 0
+					"#{opt_str}: a single letter switch must have a value appended to it" \
+						if value.length == 0
 				raise IncorrectlyFormattedOptionError,
-					"#{opt_str}: after a single dash the first letter switch must be one of " \
-					"#{@allowed_switches.join(" ")} the option had #{name}" unless @allowed_switches.include?(name.downcase)
+					"#{opt_str}: after a single dash the first letter switch must be one " \
+					"of #{@allowed_switches.join(" ")} the option had #{name}" \
+					unless @allowed_switches.include?(name.downcase)
 				res = [name, value]
 			end
 		end
@@ -49,10 +53,19 @@ module Ruplicity
 				@name = string_to_name(@name_string)
 			end
 
+			def to_s
+				result = [Utility.to_option_string(@name)]
+				result << @value if @value.length > 0
+				result.join(" ")
+			end
+
+
+
 			def verify_no_of_dashes
 				unless [1,2].include? no_of_dashes
 					raise IncorrectlyFormattedOptionError,
-						"#{@option_string}: an option must begin with 1 or 2 dashes, this one had #{no_of_dashes}"
+						"#{@option_string}: an option must begin with 1 or 2 dashes, " \
+						"this one had #{no_of_dashes}"
 				end
 			end
 
@@ -64,7 +77,8 @@ module Ruplicity
 			def splitter
 				class_hash = { 1 => Option::LetterSplitter, 2 => Option::NameSplitter }
 				splitter_class = class_hash.fetch(no_of_dashes) { raise IncorrectlyFormattedOptionError,
-					"OptionFromString#splitter should never get called with a number of dashes other than 1 or 2, " \
+					"OptionFromString#splitter should never get called " \
+					"with a number of dashes other than 1 or 2, " \
 					"this time it was called with #{no_of_dashes} for #{@option_string}" }
 				splitter_class.new
 			end
