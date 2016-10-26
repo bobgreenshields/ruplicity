@@ -8,6 +8,10 @@ module Ruplicity
 		def ==(other_option)
 			name == other_option.name
 		end
+
+		def name_as_option_string
+			Utility.to_option_string @name
+		end
 	end
 
 	class Option

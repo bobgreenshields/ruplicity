@@ -31,4 +31,22 @@ describe ".to_key" do
 
 end
 
+describe ".to_option_string" do
+	it "returns a string" do
+		expect(Utility.to_option_string(:this)).to eql("--this")
+	end
+
+	context "when the key name contains an uppercase letter" do
+		it "downcases the uppercase letter" do
+			expect(Utility.to_option_string(:This)).to eql("--this")
+		end
+	end
+
+	context "when the key name has an underscore" do
+		it "replaces the underscore with a dash " do
+			expect(Utility.to_option_string(:this_that)).to eql("--this-that")
+		end
+	end
+
+end
 
