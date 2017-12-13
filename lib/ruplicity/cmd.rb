@@ -61,6 +61,7 @@ module Ruplicity
 			result << "duplicity"
 			result << self.class.action_name
 			@cmd_items.each_with_object(result) { |item, res| res << item.call(params) }
+			result.flatten
 			result.compact
 		end
 	end
